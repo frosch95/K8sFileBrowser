@@ -1,0 +1,21 @@
+﻿using System;
+
+namespace K8sFileBrowser.Models;
+
+public class FileInformation
+{
+    public string Parent { get; set; } = string.Empty;
+    public FileType Type { get; set; } = FileType.File;
+    public string Name { get; set; } = string.Empty;
+    public string Size { get; set; } = string.Empty;
+    public DateTimeOffset Date { get; set; } = DateTimeOffset.MinValue;
+    
+    public bool IsFile => Type == FileType.File;
+}
+
+public enum FileType
+{
+    Directory,
+    File,
+    Unknown
+}

@@ -1,0 +1,103 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:K8sFileBrowser.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="K8sFileBrowser.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="K8sFileBrowser">
+    
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto, *">
+
+        <Border Padding="10 14" Background="#21252b">
+            <Grid ColumnDefinitions="Auto,Auto,Auto,*">
+                <Label Grid.Column="0"
+                       VerticalAlignment="Center"
+                       Margin="0 0 10 0">
+                    Cluster:
+                </Label>
+                <ComboBox Grid.Column="1"
+                          ItemsSource="{Binding ClusterContexts}"
+                          SelectedItem="{Binding SelectedClusterContext}"
+                          VerticalAlignment="Center"
+                          MinWidth="200"
+                          Margin="0 0 10 0">
+                </ComboBox>
+                <Label Grid.Column="2"
+                       VerticalAlignment="Center"
+                       Margin="0 0 10 0">
+                    Namespace:
+                </Label>
+                <ComboBox Grid.Column="3"
+                          ItemsSource="{Binding Namespaces}"
+                          SelectedItem="{Binding SelectedNamespace}"
+                          VerticalAlignment="Center"
+                          MinWidth="200"
+                          Margin="0 0 10 0">
+                </ComboBox>
+            </Grid>
+        </Border>
+
+
+        <Grid ColumnDefinitions="*, 1, 3*" Grid.Row="1">
+            <ListBox
+                ItemsSource="{Binding Pods}"
+                SelectedItem="{Binding SelectedPod}" Background="Transparent">
+                <ListBox.Styles>
+                    <Style Selector="ListBoxItem">
+                        <Setter Property="Padding" Value="0" />
+                    </Style>
+                </ListBox.Styles>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border CornerRadius="0" Padding="0 4 0 4" BorderBrush="SlateGray"
+                                BorderThickness="0 0 0 1">
+                            <TextBlock Text="{Binding}" Padding="4" Margin="4" />
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
+            <Grid Grid.Column="2" RowDefinitions="Auto, *">
+                <StackPanel Orientation="Horizontal" Spacing="4" Margin="10">
+                    <Button Command="{Binding ParentCommand}" VerticalAlignment="Center">Parent Directory</Button>
+                    <Button Command="{Binding OpenCommand}" VerticalAlignment="Center">Open Directory</Button>
+                    <Button Command="{Binding DownloadCommand}" VerticalAlignment="Center">Download</Button>
+                    <TextBlock Text="{Binding SelectedPath}" VerticalAlignment="Center" Margin="10 0 0 0"></TextBlock>
+                </StackPanel>
+                <DataGrid Grid.Row="1" 
+                          Name="FileInformationDataGrid"
+                          Margin="2 0 2 0"
+                          ItemsSource="{Binding FileInformation}"
+                          IsReadOnly="True"
+                          GridLinesVisibility="Horizontal"
+                          BorderThickness="1"
+                          SelectionMode="Single"
+                          SelectedItem="{Binding SelectedFile}">
+                <DataGrid.Styles>
+                    <Style Selector="DataGridColumnHeader">
+                        <Setter Property="FontSize" Value="14"></Setter>
+                        <Setter Property="Padding" Value="10"></Setter>
+                    </Style>
+                    <Style Selector="DataGridCell">
+                        <Setter Property="FontSize" Value="12"></Setter>
+                    </Style>
+                </DataGrid.Styles>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Type" Binding="{Binding Type}"/>
+                    <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name}" />
+                    <DataGridTextColumn Header="Size" Binding="{Binding Size}" />
+                    <DataGridTextColumn Header="Date" Binding="{Binding Date}" />
+                </DataGrid.Columns>
+            </DataGrid>
+            </Grid>
+        </Grid>
+    </Grid>
+
+</Window>

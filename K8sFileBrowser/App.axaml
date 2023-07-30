@@ -1,0 +1,46 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="K8sFileBrowser.App"
+             xmlns:local="using:K8sFileBrowser"
+             RequestedThemeVariant="Dark">
+             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+  
+    <Application.Styles>
+        <FluentTheme>
+            <FluentTheme.Palettes>
+                <!-- Palette for Light theme variant -->
+                <ColorPaletteResources x:Key="Light" Accent="Green" RegionColor="White" ErrorText="Red" />
+                <!-- Palette for Dark theme variant -->
+                <ColorPaletteResources x:Key="Dark" 
+                                       BaseHigh="#abb2bf"
+                                       Accent="#677696" 
+                                       RegionColor="#282c34" 
+                                       ErrorText="Red" 
+                                       AltHigh="#282c34"
+                                       AltMediumLow="#2c313c"
+                                       ListLow="#21252b"
+                                       ListMedium="#2c313c"
+                                       BaseMediumLow="#343a45"
+                                       AltMedium="#2c313c"
+                                       ChromeMediumLow="#21252b"
+                                       
+                                       />
+                <!-- AltHigh is used for the color of header in the DataGrid -->
+                <!-- BaseHigh is used for the text color -->
+                <!-- ListLow is used for the mouse over in lists and DataGrid -->
+                <!-- Accent is used for selection in lists -->
+                <!-- BaseMedium is used for border in comboboxes and Header Text in DataGrid-->
+                <!-- AltMediumLow background for comboboxes -->
+                <!-- BaseMediumLow lines in Datarid -->
+                <!-- AltMedium on mouse over comboboxes -->
+                <!-- ChromeMediumLow is used for the background of the combobox list -->
+                
+            </FluentTheme.Palettes>
+        </FluentTheme>
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+    </Application.Styles>
+</Application>
