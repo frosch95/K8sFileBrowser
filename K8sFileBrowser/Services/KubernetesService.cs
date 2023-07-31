@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using k8s;
 using k8s.KubeConfigModels;
 using K8sFileBrowser.Models;
@@ -48,7 +49,7 @@ public class KubernetesService
     {
         var pods = _kubernetesClient.CoreV1.ListNamespacedPod(namespaceName);
         var podList = pods != null
-            ? pods.Items.Select(n => 
+            ? pods.Items.Select(n =>
                 new Pod
                 {
                     Name = n.Metadata.Name,
@@ -57,7 +58,7 @@ public class KubernetesService
             : new List<Pod>();
         return podList;
     }
-    
+
     public IList<FileInformation> GetFiles(string namespaceName, string podName, string containerName, string path)
     {
         try
@@ -65,14 +66,17 @@ public class KubernetesService
             var execResult = new KubernetesFileInformationResult(path);
             var resultCode = _kubernetesClient
                 .NamespacedPodExecAsync(
-                    podName, namespaceName, containerName, 
-                    new[] { "find", path, "-maxdepth", "1", "-exec", "stat", "-c", "%F|%n|%s|%Y", "{}", ";" }, 
+                    podName, namespaceName, containerName,
+                    new[] { "find", path, "-maxdepth", "1", "-exec", "stat", "-c", "%F|%n|%s|%Y", "{}", ";" },
                     true,
                     execResult.ParseFileInformationCallback, CancellationToken.None)
                 .ConfigureAwait(false)
                 .GetAwaiter()
                 .GetResult();
-            return execResult.FileInformations;
+            return execResult.FileInformations
+              .Where(f => f.Name != "." && f.Name != path)
+              .OrderBy(f => f.Type).ThenBy(f => f.Name)
+              .ToList();
         }
         catch (Exception e)
         {
@@ -91,10 +95,10 @@ public class KubernetesService
     }
 
 
-    public void DownloadFile(Namespace? selectedNamespace, Pod? selectedPod, FileInformation selectedFile, string? saveFileName)
+    public async Task DownloadFile(Namespace? selectedNamespace, Pod? selectedPod, FileInformation selectedFile, string? saveFileName)
     {
         Log.Information($"{selectedNamespace} - {selectedPod} - {selectedFile} - {saveFileName}");
-        
-        // TODO: this is done with Tar 
+        await Task.Delay(10000);
+        // TODO: this is done with Tar
     }
 }

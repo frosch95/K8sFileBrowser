@@ -3,18 +3,25 @@
         xmlns:vm="using:K8sFileBrowser.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:models="clr-namespace:K8sFileBrowser.Models"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="K8sFileBrowser.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="K8sFileBrowser">
-    
+
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <Grid RowDefinitions="Auto, *">
-
+    <Grid>
+        <Border ZIndex="1" IsVisible="{Binding IsDownloadActive}" Background="Black" Opacity="0.7">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <PathIcon Classes="loading" Data="{StaticResource arrow_sync_regular}" Width="100" Height="100"></PathIcon>
+                <TextBlock>Download File...</TextBlock>
+            </StackPanel>
+        </Border>
+        <Grid RowDefinitions="Auto, *">
         <Border Padding="10 14" Background="#21252b">
             <Grid ColumnDefinitions="Auto,Auto,Auto,*">
                 <Label Grid.Column="0"
@@ -44,7 +51,6 @@
             </Grid>
         </Border>
 
-
         <Grid ColumnDefinitions="*, 1, 3*" Grid.Row="1">
             <ListBox
                 ItemsSource="{Binding Pods}"
@@ -65,13 +71,25 @@
             </ListBox>
             <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
             <Grid Grid.Column="2" RowDefinitions="Auto, *">
-                <StackPanel Orientation="Horizontal" Spacing="4" Margin="10">
-                    <Button Command="{Binding ParentCommand}" VerticalAlignment="Center">Parent Directory</Button>
-                    <Button Command="{Binding OpenCommand}" VerticalAlignment="Center">Open Directory</Button>
-                    <Button Command="{Binding DownloadCommand}" VerticalAlignment="Center">Download</Button>
-                    <TextBlock Text="{Binding SelectedPath}" VerticalAlignment="Center" Margin="10 0 0 0"></TextBlock>
-                </StackPanel>
-                <DataGrid Grid.Row="1" 
+                <Grid ColumnDefinitions="*, Auto">
+                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <TextBlock Text="Current Directory" VerticalAlignment="Center" Margin="10 0 0 0"></TextBlock>
+                        <TextBlock Text="{Binding SelectedPath}" VerticalAlignment="Center" Margin="10 0 0 0"></TextBlock>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4" Margin="10" HorizontalAlignment="Right">
+                        
+                        <Button Command="{Binding ParentCommand}" VerticalAlignment="Center" ToolTip.Tip="Go To Parent Directory">
+                            <PathIcon Data="{StaticResource arrow_curve_up_left_regular}"></PathIcon>
+                        </Button>
+                        <Button Command="{Binding OpenCommand}" VerticalAlignment="Center" ToolTip.Tip="Browse Directory">
+                            <PathIcon Data="{StaticResource arrow_right_regular}"></PathIcon>
+                        </Button>
+                        <Button Command="{Binding DownloadCommand}" VerticalAlignment="Center" ToolTip.Tip="Download File">
+                            <PathIcon Data="{StaticResource arrow_download_regular}"></PathIcon>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+                <DataGrid Grid.Row="1"
                           Name="FileInformationDataGrid"
                           Margin="2 0 2 0"
                           ItemsSource="{Binding FileInformation}"
@@ -79,7 +97,8 @@
                           GridLinesVisibility="Horizontal"
                           BorderThickness="1"
                           SelectionMode="Single"
-                          SelectedItem="{Binding SelectedFile}">
+                          SelectedItem="{Binding SelectedFile}"
+                          >
                 <DataGrid.Styles>
                     <Style Selector="DataGridColumnHeader">
                         <Setter Property="FontSize" Value="14"></Setter>
@@ -90,7 +109,19 @@
                     </Style>
                 </DataGrid.Styles>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Type" Binding="{Binding Type}"/>
+                    <DataGridTemplateColumn Header="Type">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="models:FileInformation">
+                                <Border ToolTip.Tip="{Binding Type}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <StackPanel>
+                                        <PathIcon Data="{StaticResource folder_regular}" IsVisible="{Binding IsDirectory}"></PathIcon>
+                                        <PathIcon Data="{StaticResource document_regular}" IsVisible="{Binding IsFile}"></PathIcon>
+                                        <PathIcon Data="{StaticResource document_unknown_regular}" IsVisible="{Binding IsUnknown}"></PathIcon>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name}" />
                     <DataGridTextColumn Header="Size" Binding="{Binding Size}" />
                     <DataGridTextColumn Header="Date" Binding="{Binding Date}" />
@@ -99,5 +130,5 @@
             </Grid>
         </Grid>
     </Grid>
-
+    </Grid>
 </Window>

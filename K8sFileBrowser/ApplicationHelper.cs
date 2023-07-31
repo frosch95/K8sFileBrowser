@@ -14,9 +14,8 @@ public static class ApplicationHelper
 {
     public static async Task<string?> SaveFile(string? initialFolder, string? initialFile)
     {
-        Window? ret;
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
-            desktop.MainWindow is not { } wnd) return null;
+      if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
+          desktop.MainWindow is not { } wnd) return null;
         try
         {
             var filter = new List<FilePickerFileType> { new("All files") { Patterns = new List<string> { "*" } } };

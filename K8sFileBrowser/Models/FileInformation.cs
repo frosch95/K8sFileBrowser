@@ -9,8 +9,10 @@ public class FileInformation
     public string Name { get; set; } = string.Empty;
     public string Size { get; set; } = string.Empty;
     public DateTimeOffset Date { get; set; } = DateTimeOffset.MinValue;
-    
+
     public bool IsFile => Type == FileType.File;
+    public bool IsDirectory => Type == FileType.Directory;
+    public bool IsUnknown => Type == FileType.Unknown;
 }
 
 public enum FileType
