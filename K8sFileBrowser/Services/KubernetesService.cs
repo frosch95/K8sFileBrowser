@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ICSharpCode.SharpZipLib.Tar;
 using k8s;
 using k8s.KubeConfigModels;
 using K8sFileBrowser.Models;
 using Serilog;
+using static ICSharpCode.SharpZipLib.Core.StreamUtils;
 
 namespace K8sFileBrowser.Services;
 
@@ -74,9 +78,9 @@ public class KubernetesService
                 .GetAwaiter()
                 .GetResult();
             return execResult.FileInformations
-              .Where(f => f.Name != "." && f.Name != path)
-              .OrderBy(f => f.Type).ThenBy(f => f.Name)
-              .ToList();
+                .Where(f => f.Name != "." && f.Name != path)
+                .OrderBy(f => f.Type).ThenBy(f => f.Name)
+                .ToList();
         }
         catch (Exception e)
         {
@@ -95,10 +99,49 @@ public class KubernetesService
     }
 
 
-    public async Task DownloadFile(Namespace? selectedNamespace, Pod? selectedPod, FileInformation selectedFile, string? saveFileName)
+    public async Task DownloadFile(Namespace? selectedNamespace, Pod? selectedPod, FileInformation selectedFile,
+        string? saveFileName)
     {
-        Log.Information($"{selectedNamespace} - {selectedPod} - {selectedFile} - {saveFileName}");
-        await Task.Delay(10000);
-        // TODO: this is done with Tar
+        Log.Information("{SelectedNamespace} - {SelectedPod} - {SelectedFile} - {SaveFileName}", 
+            selectedNamespace, selectedPod, selectedFile, saveFileName);
+        var handler = new ExecAsyncCallback(async (_, stdOut, stdError) =>
+        {
+            try
+            {
+                await using var outputFileStream = File.OpenWrite(saveFileName!);
+                await using var tarInputStream = new TarInputStream(stdOut, Encoding.Default);
+
+                var entry = await tarInputStream.GetNextEntryAsync(default);
+                if (entry == null)
+                {
+                    throw new IOException("Copy command failed: no files found");
+                }
+                
+                var bytes = new byte[entry.Size];
+                ReadFully( tarInputStream, bytes );
+                await outputFileStream.WriteAsync(bytes, default);
+            }
+            catch (Exception ex)
+            {
+                throw new IOException($"Copy command failed: {ex.Message}");
+            }
+
+            using var streamReader = new StreamReader(stdError);
+            while (streamReader.EndOfStream == false)
+            {
+                var error = await streamReader.ReadToEndAsync(default);
+                Log.Error(error);
+            }
+        });
+
+        // the kubectl uses also tar for copying files
+        await _kubernetesClient.NamespacedPodExecAsync(
+            selectedPod.Name,
+            selectedNamespace.Name,
+            selectedPod.Containers.First(),
+            new[] { "sh", "-c", $"tar cf - {selectedFile.Name}" },
+            false,
+            handler,
+            default);
     }
 }
