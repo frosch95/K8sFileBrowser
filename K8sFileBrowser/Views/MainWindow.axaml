@@ -7,7 +7,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="K8sFileBrowser.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/app.ico"
         Title="K8sFileBrowser">
 
     <Design.DataContext>
@@ -77,7 +77,7 @@
                         <TextBlock Text="{Binding SelectedPath}" VerticalAlignment="Center" Margin="10 0 0 0"></TextBlock>
                     </StackPanel>
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4" Margin="10" HorizontalAlignment="Right">
-                        
+
                         <Button Command="{Binding ParentCommand}" VerticalAlignment="Center" ToolTip.Tip="Go To Parent Directory">
                             <PathIcon Data="{StaticResource arrow_curve_up_left_regular}"></PathIcon>
                         </Button>

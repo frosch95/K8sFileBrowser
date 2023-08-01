@@ -14,7 +14,7 @@ using static ICSharpCode.SharpZipLib.Core.StreamUtils;
 
 namespace K8sFileBrowser.Services;
 
-public class KubernetesService
+public class KubernetesService : IKubernetesService
 {
     private readonly K8SConfiguration _k8SConfiguration;
     private IKubernetes _kubernetesClient = null!;
@@ -98,11 +98,10 @@ public class KubernetesService
         _kubernetesClient = kubernetesClient;
     }
 
-
     public async Task DownloadFile(Namespace? selectedNamespace, Pod? selectedPod, FileInformation selectedFile,
-        string? saveFileName)
+        string? saveFileName, CancellationToken cancellationToken = default)
     {
-        Log.Information("{SelectedNamespace} - {SelectedPod} - {SelectedFile} - {SaveFileName}", 
+        Log.Information("{SelectedNamespace} - {SelectedPod} - {SelectedFile} - {SaveFileName}",
             selectedNamespace, selectedPod, selectedFile, saveFileName);
         var handler = new ExecAsyncCallback(async (_, stdOut, stdError) =>
         {
@@ -111,15 +110,15 @@ public class KubernetesService
                 await using var outputFileStream = File.OpenWrite(saveFileName!);
                 await using var tarInputStream = new TarInputStream(stdOut, Encoding.Default);
 
-                var entry = await tarInputStream.GetNextEntryAsync(default);
+                var entry = await tarInputStream.GetNextEntryAsync(cancellationToken);
                 if (entry == null)
                 {
                     throw new IOException("Copy command failed: no files found");
                 }
-                
+
                 var bytes = new byte[entry.Size];
                 ReadFully( tarInputStream, bytes );
-                await outputFileStream.WriteAsync(bytes, default);
+                await outputFileStream.WriteAsync(bytes, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -129,7 +128,7 @@ public class KubernetesService
             using var streamReader = new StreamReader(stdError);
             while (streamReader.EndOfStream == false)
             {
-                var error = await streamReader.ReadToEndAsync(default);
+                var error = await streamReader.ReadToEndAsync(cancellationToken);
                 Log.Error(error);
             }
         });

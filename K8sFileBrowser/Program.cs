@@ -16,10 +16,10 @@ class Program
         {
             Log.Logger = new LoggerConfiguration()
                 //.Filter.ByIncludingOnly(Matching.WithProperty("Area", LogArea.Control))
-                .MinimumLevel.Verbose()
-                .WriteTo.Console()
+                .MinimumLevel.Information()
+                .WriteTo.Async(a => a.File("app.log"))
                 .CreateLogger();
-            
+
             BuildAvaloniaApp()
                 .StartWithClassicDesktopLifetime(args);
         }
@@ -30,7 +30,7 @@ class Program
         }
         finally
         {
-            // This block is optional. 
+            // This block is optional.
             // Use the finally-block if you need to clean things up or similar
             Log.CloseAndFlush();
         }
