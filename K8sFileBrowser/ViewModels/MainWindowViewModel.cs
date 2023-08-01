@@ -72,6 +72,7 @@ public class MainWindowViewModel : ViewModelBase
   }
 
   public ReactiveCommand<Unit, Unit> DownloadCommand { get; }
+  public ReactiveCommand<Unit, Unit> DownloadLogCommand { get; }
   public ReactiveCommand<Unit, Unit> ParentCommand { get; }
   public ReactiveCommand<Unit, Unit> OpenCommand { get; }
 
@@ -81,6 +82,10 @@ public class MainWindowViewModel : ViewModelBase
     //TODO: use dependency injection to get the kubernetes service
     IKubernetesService kubernetesService = new KubernetesService();
 
+    var isSelectedPod = this
+      .WhenAnyValue(x => x.SelectedPod)
+      .Select(x => x != null);
+    
     var isFile = this
       .WhenAnyValue(x => x.SelectedFile, x => x.IsDownloadActive)
       .Select(x => x is { Item1.Type: FileType.File, Item2: false });
@@ -111,6 +116,21 @@ public class MainWindowViewModel : ViewModelBase
         }
       }, RxApp.TaskpoolScheduler);
     }, isFile, RxApp.MainThreadScheduler);
+    
+    DownloadLogCommand = ReactiveCommand.CreateFromTask(async () =>
+    {
+      await Observable.StartAsync(async () =>
+      {
+        var fileName = SelectedPod?.Name + ".log";
+        var saveFileName = await ApplicationHelper.SaveFile(".", fileName);
+        if (saveFileName != null)
+        {
+          IsDownloadActive = true;
+          await kubernetesService.DownloadLog(SelectedNamespace, SelectedPod, saveFileName);
+          IsDownloadActive = false;
+        }
+      }, RxApp.TaskpoolScheduler);
+    }, isSelectedPod, RxApp.MainThreadScheduler);
 
     ParentCommand = ReactiveCommand.Create(() =>
     {

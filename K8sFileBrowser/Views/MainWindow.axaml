@@ -87,6 +87,9 @@
                         <Button Command="{Binding DownloadCommand}" VerticalAlignment="Center" ToolTip.Tip="Download File">
                             <PathIcon Data="{StaticResource arrow_download_regular}"></PathIcon>
                         </Button>
+                        <Button Command="{Binding DownloadLogCommand}" VerticalAlignment="Center" ToolTip.Tip="Download Pod Log">
+                            <PathIcon Data="{StaticResource document_one_page_regular}"></PathIcon>
+                        </Button>
                     </StackPanel>
                 </Grid>
                 <DataGrid Grid.Row="1"

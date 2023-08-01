@@ -73,7 +73,7 @@ public class KubernetesService : IKubernetesService
                     podName, namespaceName, containerName,
                     new[] { "find", path, "-maxdepth", "1", "-exec", "stat", "-c", "%F|%n|%s|%Y", "{}", ";" },
                     true,
-                    execResult.ParseFileInformationCallback, CancellationToken.None)
+                    (@in, @out, err) => execResult.ParseFileInformationCallback(@in, @out, err), CancellationToken.None)
                 .ConfigureAwait(false)
                 .GetAwaiter()
                 .GetResult();
@@ -101,7 +101,7 @@ public class KubernetesService : IKubernetesService
     public async Task DownloadFile(Namespace? selectedNamespace, Pod? selectedPod, FileInformation selectedFile,
         string? saveFileName, CancellationToken cancellationToken = default)
     {
-        Log.Information("{SelectedNamespace} - {SelectedPod} - {SelectedFile} - {SaveFileName}",
+        Log.Information("{SelectedNamespace} - {SelectedPod} - {@SelectedFile} - {SaveFileName}",
             selectedNamespace, selectedPod, selectedFile, saveFileName);
         var handler = new ExecAsyncCallback(async (_, stdOut, stdError) =>
         {
@@ -113,6 +113,7 @@ public class KubernetesService : IKubernetesService
                 var entry = await tarInputStream.GetNextEntryAsync(cancellationToken);
                 if (entry == null)
                 {
+                    Log.Error("Copy command failed: no files found");
                     throw new IOException("Copy command failed: no files found");
                 }
 
@@ -122,6 +123,7 @@ public class KubernetesService : IKubernetesService
             }
             catch (Exception ex)
             {
+                Log.Error(ex, "Copy command failed");
                 throw new IOException($"Copy command failed: {ex.Message}");
             }
 
@@ -129,18 +131,36 @@ public class KubernetesService : IKubernetesService
             while (streamReader.EndOfStream == false)
             {
                 var error = await streamReader.ReadToEndAsync(cancellationToken);
-                Log.Error(error);
+                Log.Error("Remote error: {Error}",error);
             }
         });
 
         // the kubectl uses also tar for copying files
         await _kubernetesClient.NamespacedPodExecAsync(
-            selectedPod.Name,
-            selectedNamespace.Name,
-            selectedPod.Containers.First(),
+            selectedPod?.Name,
+            selectedNamespace?.Name,
+            selectedPod?.Containers.First(),
             new[] { "sh", "-c", $"tar cf - {selectedFile.Name}" },
             false,
             handler,
-            default);
+            cancellationToken);
+    }
+    
+    public async Task DownloadLog(Namespace? selectedNamespace, Pod? selectedPod,
+        string? saveFileName, CancellationToken cancellationToken = default)
+    {
+        Log.Information("{SelectedNamespace} - {SelectedPod} - {SaveFileName}",
+            selectedNamespace, selectedPod, saveFileName);
+               // the kubectl uses also tar for copying files
+        var response = await _kubernetesClient.CoreV1.ReadNamespacedPodLogWithHttpMessagesAsync(
+            selectedPod?.Name,
+            selectedNamespace?.Name, 
+            container: selectedPod?.Containers.First(), 
+            follow: false , cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+        
+        await using var outputFileStream = File.OpenWrite(saveFileName!);
+        var stream = response.Body;
+        await stream.CopyToAsync(outputFileStream, cancellationToken);
     }
 }

@@ -17,4 +17,7 @@ public interface IKubernetesService
   IList<FileInformation> GetFiles(string namespaceName, string podName, string containerName, string path);
   Task DownloadFile(Namespace? selectedNamespace, Pod? selectedPod, FileInformation selectedFile,
     string? saveFileName, CancellationToken cancellationToken = default);
+  Task DownloadLog(Namespace? selectedNamespace, Pod? selectedPod,
+      string? saveFileName, CancellationToken cancellationToken = default);
+  
 }
