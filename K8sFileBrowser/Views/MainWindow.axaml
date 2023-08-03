@@ -15,10 +15,11 @@
     </Design.DataContext>
 
     <Grid>
-        <Border ZIndex="1" IsVisible="{Binding IsDownloadActive}" Background="Black" Opacity="0.7">
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                <PathIcon Classes="loading" Data="{StaticResource arrow_sync_regular}" Width="100" Height="100"></PathIcon>
-                <TextBlock>Download File...</TextBlock>
+        <Border ZIndex="1" IsVisible="{Binding Message.IsVisible}" Background="{Binding Message.Color}" Opacity="{Binding Message.Opacity}">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="20" MaxWidth="500">
+                <PathIcon Classes="loading" Data="{StaticResource arrow_rotate_clockwise_regular}" Width="100" Height="100" IsVisible="{Binding !Message.IsError}"></PathIcon>
+                <PathIcon Data="{StaticResource warning_regular}" Width="100" Height="100" IsVisible="{Binding Message.IsError}"></PathIcon>
+                <TextBlock TextWrapping="Wrap" Text="{Binding Message.Text}">.</TextBlock>
             </StackPanel>
         </Border>
         <Grid RowDefinitions="Auto, *">

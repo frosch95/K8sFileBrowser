@@ -12,8 +12,8 @@ public interface IKubernetesService
   IEnumerable<ClusterContext> GetClusterContexts();
   string GetCurrentContext();
   void SwitchClusterContext(ClusterContext clusterContext);
-  IEnumerable<Namespace> GetNamespaces();
-  IEnumerable<Pod> GetPods(string namespaceName);
+  Task<IEnumerable<Namespace>> GetNamespacesAsync();
+  Task<IEnumerable<Pod>> GetPodsAsync(string namespaceName, CancellationToken cancellationToken = default);
   IList<FileInformation> GetFiles(string namespaceName, string podName, string containerName, string path);
   Task DownloadFile(Namespace? selectedNamespace, Pod? selectedPod, FileInformation selectedFile,
     string? saveFileName, CancellationToken cancellationToken = default);

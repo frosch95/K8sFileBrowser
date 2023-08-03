@@ -40,7 +40,7 @@ public class KubernetesService : IKubernetesService
         CreateKubernetesClient(clusterContext);
     }
 
-    public IEnumerable<Namespace> GetNamespaces()
+    public async Task<IEnumerable<Namespace>> GetNamespacesAsync()
     {
         var namespaces = _kubernetesClient.CoreV1.ListNamespace();
         var namespaceList = namespaces != null
@@ -49,9 +49,9 @@ public class KubernetesService : IKubernetesService
         return namespaceList;
     }
 
-    public IEnumerable<Pod> GetPods(string namespaceName)
+    public async Task<IEnumerable<Pod>> GetPodsAsync(string namespaceName, CancellationToken cancellationToken = default)
     {
-        var pods = _kubernetesClient.CoreV1.ListNamespacedPod(namespaceName);
+        var pods = await _kubernetesClient.CoreV1.ListNamespacedPodAsync(namespaceName, cancellationToken: cancellationToken);
         var podList = pods != null
             ? pods.Items.Select(n =>
                 new Pod
