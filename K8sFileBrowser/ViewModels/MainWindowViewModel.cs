@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using K8sFileBrowser.Models;
@@ -167,7 +168,7 @@ public class MainWindowViewModel : ViewModelBase
     GetPodsForNamespace = ReactiveCommand.CreateFromObservable<Namespace, IEnumerable<Pod>>(ns =>
       Observable.StartAsync(_ => PodsAsync(ns, kubernetesService), RxApp.TaskpoolScheduler));
 
-    GetPodsForNamespace.ThrownExceptions
+    GetPodsForNamespace.ThrownExceptions.ObserveOn(RxApp.MainThreadScheduler)
       .Subscribe(ex => ShowErrorMessage(ex.Message).ConfigureAwait(false).GetAwaiter().GetResult());
   }
 
@@ -186,7 +187,7 @@ public class MainWindowViewModel : ViewModelBase
       }
     }, isNotRoot, RxApp.MainThreadScheduler);
 
-    ParentCommand.ThrownExceptions
+    ParentCommand.ThrownExceptions.ObserveOn(RxApp.MainThreadScheduler)
       .Subscribe(ex => ShowErrorMessage(ex.Message).ConfigureAwait(false).GetAwaiter().GetResult());
   }
 
@@ -211,7 +212,7 @@ public class MainWindowViewModel : ViewModelBase
       }, RxApp.TaskpoolScheduler);
     }, isSelectedPod, RxApp.MainThreadScheduler);
 
-    DownloadLogCommand.ThrownExceptions
+    DownloadLogCommand.ThrownExceptions.ObserveOn(RxApp.MainThreadScheduler)
       .Subscribe(ex => ShowErrorMessage(ex.Message).ConfigureAwait(false).GetAwaiter().GetResult());
   }
 
@@ -237,7 +238,7 @@ public class MainWindowViewModel : ViewModelBase
       }, RxApp.TaskpoolScheduler);
     }, isFile, RxApp.MainThreadScheduler);
 
-    DownloadCommand.ThrownExceptions
+    DownloadCommand.ThrownExceptions.ObserveOn(RxApp.MainThreadScheduler)
       .Subscribe(ex => ShowErrorMessage(ex.Message).ConfigureAwait(false).GetAwaiter().GetResult());
   }
 
@@ -250,7 +251,7 @@ public class MainWindowViewModel : ViewModelBase
     OpenCommand = ReactiveCommand.Create(() => { SelectedPath = SelectedFile != null ? SelectedFile!.Name : "/"; },
       isDirectory, RxApp.MainThreadScheduler);
 
-    OpenCommand.ThrownExceptions
+    OpenCommand.ThrownExceptions.ObserveOn(RxApp.MainThreadScheduler)
       .Subscribe(ex => ShowErrorMessage(ex.Message).ConfigureAwait(false).GetAwaiter().GetResult());
   }
 
@@ -277,8 +278,10 @@ public class MainWindowViewModel : ViewModelBase
     }
     catch (Exception e)
     {
-      await ShowErrorMessage(e.Message);      
+      RxApp.MainThreadScheduler.Schedule(Action);    
       return new List<Namespace>();
+
+      async void Action() => await ShowErrorMessage(e.Message);
     }
   }
 
