@@ -101,7 +101,8 @@
                           GridLinesVisibility="Horizontal"
                           BorderThickness="1"
                           SelectionMode="Single"
-                          SelectedItem="{Binding SelectedFile}">
+                          SelectedItem="{Binding SelectedFile}"
+                          Focusable="False">
                 <DataGrid.Styles>
                     <Style Selector="DataGridColumnHeader">
                         <Setter Property="FontSize" Value="14"></Setter>
