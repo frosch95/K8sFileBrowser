@@ -8,12 +8,11 @@
         x:Class="K8sFileBrowser.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/app.ico"
-        Title="K8sFileBrowser"
-        DataContext="{DynamicResource ViewModel}">
-        
-    <Window.Resources>
-        <vm:MainWindowViewModel x:Key="ViewModel" />
-    </Window.Resources>
+        Title="K8sFileBrowser">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
 
     <Grid>
         <Border ZIndex="1" IsVisible="{Binding Message.IsVisible}" Background="{Binding Message.Color}" Opacity="{Binding Message.Opacity}">
@@ -116,24 +115,63 @@
                     <DataGridTemplateColumn Header="Type">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="models:FileInformation">
-                                <Border ToolTip.Tip="{Binding Type}" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <StackPanel>
+                                <Border ToolTip.Tip="{Binding Type}" Background="Transparent">
+                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                                         <PathIcon Data="{StaticResource folder_regular}" IsVisible="{Binding IsDirectory}"></PathIcon>
                                         <PathIcon Data="{StaticResource document_regular}" IsVisible="{Binding IsFile}"></PathIcon>
                                         <PathIcon Data="{StaticResource document_unknown_regular}" IsVisible="{Binding IsUnknown}"></PathIcon>
                                     </StackPanel>
                                     <Interaction.Behaviors>
                                         <EventTriggerBehavior EventName="DoubleTapped">
-                                            <InvokeCommandAction Command="{Binding Source={StaticResource ViewModel}, Path=OpenCommand}" />
+                                            <InvokeCommandAction Command="{Binding ((vm:MainWindowViewModel)DataContext).OpenCommand, RelativeSource={RelativeSource AncestorType=Window }}" />
                                         </EventTriggerBehavior>
                                     </Interaction.Behaviors>
                                 </Border>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name}" />
-                    <DataGridTextColumn Header="Size" Binding="{Binding Size}" />
-                    <DataGridTextColumn Header="Date" Binding="{Binding Date}" />
+                    <DataGridTemplateColumn Header="Name" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="models:FileInformation">
+                                <Border Background="Transparent">
+                                    <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"/>
+                                    <Interaction.Behaviors>
+                                        <EventTriggerBehavior EventName="DoubleTapped">
+                                            <InvokeCommandAction Command="{Binding ((vm:MainWindowViewModel)DataContext).OpenCommand, RelativeSource={RelativeSource AncestorType=Window }}" />
+                                        </EventTriggerBehavior>
+                                    </Interaction.Behaviors>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Size" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="models:FileInformation">
+                                <Border Background="Transparent">
+                                    <TextBlock Text="{Binding Size}" VerticalAlignment="Center"/>
+                                    <Interaction.Behaviors>
+                                        <EventTriggerBehavior EventName="DoubleTapped">
+                                            <InvokeCommandAction Command="{Binding ((vm:MainWindowViewModel)DataContext).OpenCommand, RelativeSource={RelativeSource AncestorType=Window }}" />
+                                        </EventTriggerBehavior>
+                                    </Interaction.Behaviors>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Date" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="models:FileInformation">
+                                <Border Background="Transparent">
+                                    <TextBlock Text="{Binding Date}" VerticalAlignment="Center"/>
+                                    <Interaction.Behaviors>
+                                        <EventTriggerBehavior EventName="DoubleTapped">
+                                            <InvokeCommandAction Command="{Binding ((vm:MainWindowViewModel)DataContext).OpenCommand, RelativeSource={RelativeSource AncestorType=Window }}" />
+                                        </EventTriggerBehavior>
+                                    </Interaction.Behaviors>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
             </Grid>
