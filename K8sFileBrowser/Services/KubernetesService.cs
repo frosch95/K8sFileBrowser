@@ -98,7 +98,7 @@ public class KubernetesService : IKubernetesService
         _kubernetesClient = kubernetesClient;
     }
 
-    public async Task DownloadFile(Namespace? selectedNamespace, Pod? selectedPod, FileInformation selectedFile,
+    public async Task DownloadFile(Namespace? selectedNamespace, Pod? selectedPod, Container? selectedContainer, FileInformation selectedFile, 
         string? saveFileName, CancellationToken cancellationToken = default)
     {
         Log.Information("{SelectedNamespace} - {SelectedPod} - {@SelectedFile} - {SaveFileName}",
@@ -139,14 +139,14 @@ public class KubernetesService : IKubernetesService
         await _kubernetesClient.NamespacedPodExecAsync(
             selectedPod?.Name,
             selectedNamespace?.Name,
-            selectedPod?.Containers.First(),
+            selectedContainer?.Name,
             new[] { "sh", "-c", $"tar cf - {selectedFile.Name}" },
             false,
             handler,
             cancellationToken);
     }
     
-    public async Task DownloadLog(Namespace? selectedNamespace, Pod? selectedPod,
+    public async Task DownloadLog(Namespace? selectedNamespace, Pod? selectedPod, Container? selectedContainer,
         string? saveFileName, CancellationToken cancellationToken = default)
     {
         Log.Information("{SelectedNamespace} - {SelectedPod} - {SaveFileName}",
@@ -155,7 +155,7 @@ public class KubernetesService : IKubernetesService
         var response = await _kubernetesClient.CoreV1.ReadNamespacedPodLogWithHttpMessagesAsync(
             selectedPod?.Name,
             selectedNamespace?.Name, 
-            container: selectedPod?.Containers.First(), 
+            container: selectedContainer?.Name, 
             follow: false , cancellationToken: cancellationToken)
             .ConfigureAwait(false);
         

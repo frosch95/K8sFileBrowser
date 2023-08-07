@@ -13,7 +13,7 @@ namespace K8sFileBrowser.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
-  private ObservableAsPropertyHelper<IEnumerable<ClusterContext>> _clusterContexts;
+  private ObservableAsPropertyHelper<IEnumerable<ClusterContext>> _clusterContexts = null!;
   public IEnumerable<ClusterContext> ClusterContexts => _clusterContexts.Value;
 
   private ClusterContext? _selectedClusterContext;
@@ -24,7 +24,7 @@ public class MainWindowViewModel : ViewModelBase
     set => this.RaiseAndSetIfChanged(ref _selectedClusterContext, value);
   }
 
-  private IEnumerable<Namespace> _namespaces;
+  private IEnumerable<Namespace> _namespaces = null!;
   public IEnumerable<Namespace> Namespaces
   {
     get => _namespaces;
@@ -39,7 +39,7 @@ public class MainWindowViewModel : ViewModelBase
     set => this.RaiseAndSetIfChanged(ref _selectedNamespace, value);
   }
 
-  private ObservableAsPropertyHelper<IEnumerable<Pod>> _pods;
+  private ObservableAsPropertyHelper<IEnumerable<Pod>> _pods = null!;
   public IEnumerable<Pod> Pods => _pods.Value;
 
   private Pod? _selectedPod;
@@ -49,8 +49,23 @@ public class MainWindowViewModel : ViewModelBase
     get => _selectedPod;
     set => this.RaiseAndSetIfChanged(ref _selectedPod, value);
   }
+  
+  private IEnumerable<Container>? _containers;
+  public IEnumerable<Container>? Containers
+  {
+    get => _containers;
+    set => this.RaiseAndSetIfChanged(ref _containers, value);
+  }
 
-  private ObservableAsPropertyHelper<IEnumerable<FileInformation>> _fileInformation;
+  private Container? _selectedContainer;
+
+  public Container? SelectedContainer
+  {
+    get => _selectedContainer;
+    set => this.RaiseAndSetIfChanged(ref _selectedContainer, value);
+  }
+
+  private ObservableAsPropertyHelper<IEnumerable<FileInformation>> _fileInformation = null!;
   public IEnumerable<FileInformation> FileInformation => _fileInformation.Value;
 
   private FileInformation? _selectedFile;
@@ -69,19 +84,19 @@ public class MainWindowViewModel : ViewModelBase
     set => this.RaiseAndSetIfChanged(ref _selectedPath, value);
   }
 
-  private Message _message;
+  private Message _message = null!;
   public Message Message
   {
     get => _message;
     set => this.RaiseAndSetIfChanged(ref _message, value);
   }
   
-  public ReactiveCommand<Unit, Unit> DownloadCommand { get; private set; }
-  public ReactiveCommand<Unit, Unit> DownloadLogCommand { get; private set; }
-  public ReactiveCommand<Unit, Unit> ParentCommand { get; private set; }
-  public ReactiveCommand<Unit, Unit> OpenCommand { get; private set; }
+  public ReactiveCommand<Unit, Unit> DownloadCommand { get; private set; } = null!;
+  public ReactiveCommand<Unit, Unit> DownloadLogCommand { get; private set; } = null!;
+  public ReactiveCommand<Unit, Unit> ParentCommand { get; private set; } = null!;
+  public ReactiveCommand<Unit, Unit> OpenCommand { get; private set; } = null!;
 
-  private ReactiveCommand<Namespace, IEnumerable<Pod>> GetPodsForNamespace { get; set; }
+  private ReactiveCommand<Namespace, IEnumerable<Pod>> GetPodsForNamespace { get; set; } = null!;
 
 
   public MainWindowViewModel()
@@ -99,6 +114,7 @@ public class MainWindowViewModel : ViewModelBase
     // register the listeners
     RegisterReadNamespaces(kubernetesService);
     RegisterReadPods();
+    RegisterReadContainers();
     RegisterReadFiles(kubernetesService);
     RegisterResetPath();
 
@@ -124,18 +140,37 @@ public class MainWindowViewModel : ViewModelBase
     // reset the path when the pod or namespace changes
     this.WhenAnyValue(c => c.SelectedPod, c => c.SelectedNamespace)
       .Throttle(new TimeSpan(10))
+      .ObserveOn(RxApp.TaskpoolScheduler)
       .Subscribe(x => SelectedPath = "/");
   }
+  
+  private void RegisterReadContainers()
+  {
+    // read the file information when the path changes
+    this
+      .WhenAnyValue(c => c.SelectedPod, c => c.SelectedNamespace)
+      .Throttle(new TimeSpan(10))
+      .Select(x => x.Item2 == null || x.Item1 == null
+        ? new List<Container>()
+        : x.Item1.Containers.Select(c => new Container {Name = c}))
+      .ObserveOn(RxApp.MainThreadScheduler)
+      .Subscribe( x => Containers = x);
+    
+    this.WhenAnyValue(x => x.Containers)
+      .Throttle(new TimeSpan(10))
+      .ObserveOn(RxApp.MainThreadScheduler)
+      .Subscribe(x => SelectedContainer = x?.FirstOrDefault());
+}
 
   private void RegisterReadFiles(IKubernetesService kubernetesService)
   {
     // read the file information when the path changes
     _fileInformation = this
-      .WhenAnyValue(c => c.SelectedPath, c => c.SelectedPod, c => c.SelectedNamespace)
+      .WhenAnyValue(c => c.SelectedPath, c => c.SelectedPod, c => c.SelectedNamespace, c => c.SelectedContainer)
       .Throttle(new TimeSpan(10))
-      .Select(x => x.Item3 == null || x.Item2 == null
+      .Select(x => x.Item3 == null || x.Item2 == null || x.Item1 == null || x.Item4 == null
         ? new List<FileInformation>()
-        : kubernetesService.GetFiles(x.Item3!.Name, x.Item2!.Name, x.Item2!.Containers.First(),
+        : kubernetesService.GetFiles(x.Item3!.Name, x.Item2!.Name, x.Item4!.Name,
           x.Item1))
       .ObserveOn(RxApp.MainThreadScheduler)
       .ToProperty(this, x => x.FileInformation);
@@ -206,7 +241,7 @@ public class MainWindowViewModel : ViewModelBase
         if (saveFileName != null)
         {
           ShowWorkingMessage("Downloading Log...");
-          await kubernetesService.DownloadLog(SelectedNamespace, SelectedPod, saveFileName);
+          await kubernetesService.DownloadLog(SelectedNamespace, SelectedPod, SelectedContainer, saveFileName);
           HideWorkingMessage();
         }
       }, RxApp.TaskpoolScheduler);
@@ -232,7 +267,7 @@ public class MainWindowViewModel : ViewModelBase
         if (saveFileName != null)
         {
           ShowWorkingMessage("Downloading File...");
-          await kubernetesService.DownloadFile(SelectedNamespace, SelectedPod, SelectedFile, saveFileName);
+          await kubernetesService.DownloadFile(SelectedNamespace, SelectedPod, SelectedContainer, SelectedFile, saveFileName);
           HideWorkingMessage();
         }
       }, RxApp.TaskpoolScheduler);

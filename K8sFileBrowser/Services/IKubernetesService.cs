@@ -15,9 +15,9 @@ public interface IKubernetesService
   Task<IEnumerable<Namespace>> GetNamespacesAsync();
   Task<IEnumerable<Pod>> GetPodsAsync(string namespaceName, CancellationToken cancellationToken = default);
   IList<FileInformation> GetFiles(string namespaceName, string podName, string containerName, string path);
-  Task DownloadFile(Namespace? selectedNamespace, Pod? selectedPod, FileInformation selectedFile,
+  Task DownloadFile(Namespace? selectedNamespace, Pod? selectedPod, Container? selectedContainer, FileInformation selectedFile,
     string? saveFileName, CancellationToken cancellationToken = default);
-  Task DownloadLog(Namespace? selectedNamespace, Pod? selectedPod,
+  Task DownloadLog(Namespace? selectedNamespace, Pod? selectedPod, Container? selectedContainer,
       string? saveFileName, CancellationToken cancellationToken = default);
   
 }

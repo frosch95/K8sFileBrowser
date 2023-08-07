@@ -72,12 +72,24 @@
             </ListBox>
             <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
             <Grid Grid.Column="2" RowDefinitions="Auto, *">
-                <Grid ColumnDefinitions="*, Auto">
+                <Grid ColumnDefinitions="*, Auto, Auto">
                     <StackPanel Grid.Column="0" Orientation="Horizontal">
                         <TextBlock Text="Current Directory" VerticalAlignment="Center" Margin="10 0 0 0"></TextBlock>
                         <TextBlock Text="{Binding SelectedPath}" VerticalAlignment="Center" Margin="10 0 0 0"></TextBlock>
                     </StackPanel>
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4" Margin="10" HorizontalAlignment="Right">
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal">
+                        <Label VerticalAlignment="Center"
+                               Margin="0 0 10 0">
+                            Container:
+                        </Label>
+                        <ComboBox ItemsSource="{Binding Containers}"
+                                  SelectedItem="{Binding SelectedContainer}"
+                                  VerticalAlignment="Center"
+                                  MinWidth="200"
+                                  Margin="0 0 10 0">
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" Margin="10" HorizontalAlignment="Right">
 
                         <Button Command="{Binding ParentCommand}" VerticalAlignment="Center" ToolTip.Tip="Go To Parent Directory">
                             <PathIcon Data="{StaticResource arrow_curve_up_left_regular}"></PathIcon>
