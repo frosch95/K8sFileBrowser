@@ -8,11 +8,12 @@
         x:Class="K8sFileBrowser.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/app.ico"
-        Title="K8sFileBrowser">
-
-    <Design.DataContext>
-        <vm:MainWindowViewModel />
-    </Design.DataContext>
+        Title="K8sFileBrowser"
+        DataContext="{DynamicResource ViewModel}">
+        
+    <Window.Resources>
+        <vm:MainWindowViewModel x:Key="ViewModel" />
+    </Window.Resources>
 
     <Grid>
         <Border ZIndex="1" IsVisible="{Binding Message.IsVisible}" Background="{Binding Message.Color}" Opacity="{Binding Message.Opacity}">
@@ -101,8 +102,8 @@
                           GridLinesVisibility="Horizontal"
                           BorderThickness="1"
                           SelectionMode="Single"
-                          SelectedItem="{Binding SelectedFile}"
-                          >
+                          Tag="{Binding OpenCommand}"
+                          SelectedItem="{Binding SelectedFile}">
                 <DataGrid.Styles>
                     <Style Selector="DataGridColumnHeader">
                         <Setter Property="FontSize" Value="14"></Setter>
@@ -122,6 +123,11 @@
                                         <PathIcon Data="{StaticResource document_regular}" IsVisible="{Binding IsFile}"></PathIcon>
                                         <PathIcon Data="{StaticResource document_unknown_regular}" IsVisible="{Binding IsUnknown}"></PathIcon>
                                     </StackPanel>
+                                    <Interaction.Behaviors>
+                                        <EventTriggerBehavior EventName="DoubleTapped">
+                                            <InvokeCommandAction Command="{Binding Source={StaticResource ViewModel}, Path=OpenCommand}" />
+                                        </EventTriggerBehavior>
+                                    </Interaction.Behaviors>
                                 </Border>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
