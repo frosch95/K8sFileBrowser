@@ -102,7 +102,6 @@
                           GridLinesVisibility="Horizontal"
                           BorderThickness="1"
                           SelectionMode="Single"
-                          Tag="{Binding OpenCommand}"
                           SelectedItem="{Binding SelectedFile}">
                 <DataGrid.Styles>
                     <Style Selector="DataGridColumnHeader">
