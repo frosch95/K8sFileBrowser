@@ -158,7 +158,7 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Size" Width="*">
+                    <DataGridTemplateColumn Header="Size">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="models:FileInformation">
                                 <Border Background="Transparent">
@@ -172,7 +172,7 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Date" Width="*">
+                    <DataGridTemplateColumn Header="Date">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="models:FileInformation">
                                 <Border Background="Transparent">
