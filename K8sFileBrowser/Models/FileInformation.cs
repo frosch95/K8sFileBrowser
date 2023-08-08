@@ -6,10 +6,18 @@ public class FileInformation
 {
     public string Parent { get; set; } = string.Empty;
     public FileType Type { get; set; } = FileType.File;
-    public string DisplayName => Parent.Length < 2 ? Name[Parent.Length..] : Name[( Parent.Length + 1)..];
+    public string DisplayName
+    {
+        get
+        {
+            if (".." == Name) return "..";
+            return Parent.Length < 2 ? Name[Parent.Length..] : Name[(Parent.Length + 1)..];
+        }
+    }
+
     public string Name { get; set; } = string.Empty;
     public string Size { get; set; } = string.Empty;
-    public DateTimeOffset Date { get; set; } = DateTimeOffset.MinValue;
+    public DateTimeOffset? Date { get; set; }
 
     public bool IsFile => Type == FileType.File;
     public bool IsDirectory => Type == FileType.Directory;

@@ -141,7 +141,7 @@ public class MainWindowViewModel : ViewModelBase
     this.WhenAnyValue(c => c.SelectedPod, c => c.SelectedNamespace)
       .Throttle(new TimeSpan(10))
       .ObserveOn(RxApp.TaskpoolScheduler)
-      .Subscribe(x => SelectedPath = "/");
+      .Subscribe(_ => SelectedPath = "/");
   }
   
   private void RegisterReadContainers()
@@ -170,8 +170,7 @@ public class MainWindowViewModel : ViewModelBase
       .Throttle(new TimeSpan(10))
       .Select(x => x.Item3 == null || x.Item2 == null || x.Item1 == null || x.Item4 == null
         ? new List<FileInformation>()
-        : kubernetesService.GetFiles(x.Item3!.Name, x.Item2!.Name, x.Item4!.Name,
-          x.Item1))
+        : GetFileInformation(kubernetesService, x.Item1, x.Item2, x.Item3, x.Item4))
       .ObserveOn(RxApp.MainThreadScheduler)
       .ToProperty(this, x => x.FileInformation);
   }
@@ -182,7 +181,7 @@ public class MainWindowViewModel : ViewModelBase
     _pods = this
       .WhenAnyValue(c => c.SelectedNamespace)
       .Throttle(new TimeSpan(10))
-      .SelectMany(ns => GetPodsForNamespace.Execute(ns))
+      .SelectMany(ns => GetPodsForNamespace.Execute(ns!))
       .ObserveOn(RxApp.MainThreadScheduler)
       .ToProperty(this, x => x.Pods);
   }
@@ -283,7 +282,13 @@ public class MainWindowViewModel : ViewModelBase
       .WhenAnyValue(x => x.SelectedFile, x => x.Message.IsVisible)
       .Select(x => x is { Item1.Type: FileType.Directory, Item2: false });
 
-    OpenCommand = ReactiveCommand.Create(() => { SelectedPath = SelectedFile != null ? SelectedFile!.Name : "/"; },
+    OpenCommand = ReactiveCommand.Create(() =>
+      {
+        if (".." == SelectedFile?.Name)
+          SelectedPath = SelectedFile?.Parent;
+        else
+          SelectedPath = SelectedFile != null ? SelectedFile!.Name : "/";
+      },
       isDirectory, RxApp.MainThreadScheduler);
 
     OpenCommand.ThrownExceptions.ObserveOn(RxApp.MainThreadScheduler)
@@ -306,7 +311,7 @@ public class MainWindowViewModel : ViewModelBase
     {
       ShowWorkingMessage("Switching context...");
       Namespaces = new List<Namespace>();
-      kubernetesService.SwitchClusterContext(context!);
+      kubernetesService.SwitchClusterContext(context);
       var namespaces = await kubernetesService.GetNamespacesAsync();
       HideWorkingMessage();
       return namespaces;
@@ -318,6 +323,30 @@ public class MainWindowViewModel : ViewModelBase
 
       async void Action() => await ShowErrorMessage(e.Message);
     }
+  }
+  
+  private IList<FileInformation> GetFileInformation(IKubernetesService kubernetesService, 
+    string path, Pod pod, Namespace nameSpace, Container container)
+  {
+    var kubernetesFileInformation = kubernetesService.GetFiles(
+      nameSpace.Name, pod.Name, container.Name, path);
+
+    // when the path is root, we don't want to show the parent directory
+    if (SelectedPath is not { Length: > 1 }) return kubernetesFileInformation;
+    
+    // add the parent directory
+    var parent = SelectedPath[..SelectedPath.LastIndexOf('/')];
+    if (string.IsNullOrEmpty(parent))
+    {
+      parent = "/";
+    }
+
+    return kubernetesFileInformation.Prepend(new FileInformation
+    {
+      Name = "..",
+      Type = FileType.Directory,
+      Parent = parent
+    }).ToList();
   }
 
   private void ShowWorkingMessage(string message)
