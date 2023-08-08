@@ -22,11 +22,13 @@ public class FileInformation
     public bool IsFile => Type == FileType.File;
     public bool IsDirectory => Type == FileType.Directory;
     public bool IsUnknown => Type == FileType.Unknown;
+    public bool IsSymbolicLink => Type == FileType.SymbolicLink;
 }
 
 public enum FileType
 {
     Directory,
     File,
+    SymbolicLink,
     Unknown
 }

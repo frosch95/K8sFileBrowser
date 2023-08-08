@@ -132,6 +132,7 @@
                                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                                         <PathIcon Data="{StaticResource folder_regular}" IsVisible="{Binding IsDirectory}"></PathIcon>
                                         <PathIcon Data="{StaticResource document_regular}" IsVisible="{Binding IsFile}"></PathIcon>
+                                        <PathIcon Data="{StaticResource document_error_regular}" IsVisible="{Binding IsSymbolicLink}"></PathIcon>
                                         <PathIcon Data="{StaticResource document_unknown_regular}" IsVisible="{Binding IsUnknown}"></PathIcon>
                                     </StackPanel>
                                     <Interaction.Behaviors>

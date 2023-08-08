@@ -42,7 +42,7 @@ public class KubernetesService : IKubernetesService
 
     public async Task<IEnumerable<Namespace>> GetNamespacesAsync()
     {
-        var namespaces = _kubernetesClient.CoreV1.ListNamespace();
+        var namespaces = await _kubernetesClient.CoreV1.ListNamespaceAsync();
         var namespaceList = namespaces != null
             ? namespaces.Items.Select(n => new Namespace { Name = n.Metadata.Name }).ToList()
             : new List<Namespace>();

@@ -56,6 +56,8 @@ public class KubernetesFileInformationResult
         {
             "directory" => FileType.Directory,
             "regular file" => FileType.File,
+            "regular empty file" => FileType.File,
+            "symbolic link" => FileType.SymbolicLink,
             _ => FileType.Unknown
         };
     }

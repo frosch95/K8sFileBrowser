@@ -9,7 +9,7 @@
         <Configurations>Debug;Release</Configurations>
         <Platforms>AnyCPU</Platforms>
         <ApplicationIcon>Assets/app.ico</ApplicationIcon>
-        <Version>0.0.7</Version>
+        <Version>0.0.8</Version>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
       <DefineConstants>TRACE</DefineConstants>
@@ -21,13 +21,13 @@
 
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.0.1" />
-        <PackageReference Include="Avalonia.Desktop" Version="11.0.1" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.1" />
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.1" />
+        <PackageReference Include="Avalonia" Version="11.0.2" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.0.2" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.2" />
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.2" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.1" />
-        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.1" />
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.2" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.2" />
         <PackageReference Include="Avalonia.Xaml.Interactions" Version="11.0.2" />
         <PackageReference Include="Avalonia.Xaml.Interactivity" Version="11.0.2" />
         <PackageReference Include="KubernetesClient" Version="11.0.44" />
