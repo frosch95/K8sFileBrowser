@@ -161,7 +161,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="models:FileInformation">
                                 <Border Background="Transparent">
-                                    <TextBlock Text="{Binding Size}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0 0 8 0"/>
+                                    <TextBlock Text="{Binding Size}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0 0 10 0"/>
                                     <Interaction.Behaviors>
                                         <EventTriggerBehavior EventName="DoubleTapped">
                                             <InvokeCommandAction Command="{Binding ((vm:MainWindowViewModel)DataContext).OpenCommand, RelativeSource={RelativeSource AncestorType=Window }}" />
@@ -175,7 +175,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="models:FileInformation">
                                 <Border Background="Transparent">
-                                    <TextBlock Text="{Binding DateTimeOffsetString}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0 0 8 0"/>
+                                    <TextBlock Text="{Binding DateTimeOffsetString}" VerticalAlignment="Center" Margin="10 0 8 0"/>
                                     <Interaction.Behaviors>
                                         <EventTriggerBehavior EventName="DoubleTapped">
                                             <InvokeCommandAction Command="{Binding ((vm:MainWindowViewModel)DataContext).OpenCommand, RelativeSource={RelativeSource AncestorType=Window}}" />

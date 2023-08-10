@@ -1,32 +1,40 @@
+
+using System.IO;
+using System.IO.Compression;
 using Nuke.Common;
 using Nuke.Common.IO;
-using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 class Build : NukeBuild
 {
+    [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
+    readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
+    
+    [Parameter] readonly string Version = "1.0.0";
+    
     AbsolutePath SourceDirectory => RootDirectory / "K8sFileBrowser";
     AbsolutePath OutputDirectory => RootDirectory / "output";
     AbsolutePath WinOutputDirectory => OutputDirectory / "win";
     AbsolutePath LinuxOutputDirectory => OutputDirectory / "linux";
     
+    AbsolutePath WinZip => OutputDirectory / $"K8sFileBrowser_{Version}.zip";
+    AbsolutePath LinuxGz => OutputDirectory / $"K8sFileBrowser_{Version}.tgz";
+    
     AbsolutePath ProjectFile => SourceDirectory / "K8sFileBrowser.csproj";
+
+    readonly string ExcludedExtensions = "pdb";
     
     public static int Main () => Execute<Build>(x => x.Publish);
 
-    [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
-    readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
-    
-    [Parameter] readonly string Version = "1.0.0";
+
 
     Target Clean => _ => _
         .Before(Restore)
         .Executes(() =>
         {
-            DotNetClean(s => s
-                .SetOutput(OutputDirectory));
+            OutputDirectory.DeleteDirectory();
         });
 
     Target Restore => _ => _
@@ -56,6 +64,12 @@ class Build : NukeBuild
                 .SetProcessArgumentConfigurator(_ => _
                     .Add("-p:IncludeNativeLibrariesForSelfExtract=true"))
                 .EnableNoRestore());
+            
+            WinOutputDirectory.ZipTo(
+                WinZip,
+                filter: x => !x.HasExtension(ExcludedExtensions),
+                compressionLevel: CompressionLevel.SmallestSize,
+                fileMode: FileMode.CreateNew);
         });
     
     Target PublishLinux => _ => _
@@ -77,6 +91,11 @@ class Build : NukeBuild
                 .SetProcessArgumentConfigurator(_ => _
                     .Add("-p:IncludeNativeLibrariesForSelfExtract=true"))
                 .EnableNoRestore());
+            
+            LinuxOutputDirectory.TarGZipTo(
+                LinuxGz,
+                filter: x => !x.HasExtension(ExcludedExtensions),
+                fileMode: FileMode.CreateNew);
         });
     
     Target Publish => _ => _
