@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using K8sFileBrowser.Models;
 using K8sFileBrowser.Services;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 
 namespace K8sFileBrowser.ViewModels;
 
@@ -16,81 +17,39 @@ public class MainWindowViewModel : ViewModelBase
   private ObservableAsPropertyHelper<IEnumerable<ClusterContext>> _clusterContexts = null!;
   public IEnumerable<ClusterContext> ClusterContexts => _clusterContexts.Value;
 
-  private ClusterContext? _selectedClusterContext;
+  [Reactive]
+  public ClusterContext? SelectedClusterContext { get; set; }
 
-  public ClusterContext? SelectedClusterContext
-  {
-    get => _selectedClusterContext;
-    set => this.RaiseAndSetIfChanged(ref _selectedClusterContext, value);
-  }
+  [Reactive]
+  public IEnumerable<Namespace> Namespaces { get; set; }
 
-  private IEnumerable<Namespace> _namespaces = null!;
-  public IEnumerable<Namespace> Namespaces
-  {
-    get => _namespaces;
-    set => this.RaiseAndSetIfChanged(ref _namespaces, value);
-  }
-
-  private Namespace? _selectedNamespace;
-
-  public Namespace? SelectedNamespace
-  {
-    get => _selectedNamespace;
-    set => this.RaiseAndSetIfChanged(ref _selectedNamespace, value);
-  }
+  [Reactive]
+  public Namespace? SelectedNamespace { get; set; }
 
   private ObservableAsPropertyHelper<IEnumerable<Pod>> _pods = null!;
   public IEnumerable<Pod> Pods => _pods.Value;
 
-  private Pod? _selectedPod;
+  [Reactive]
+  public Pod? SelectedPod { get; set; }
 
-  public Pod? SelectedPod
-  {
-    get => _selectedPod;
-    set => this.RaiseAndSetIfChanged(ref _selectedPod, value);
-  }
-  
-  private IEnumerable<Container>? _containers;
-  public IEnumerable<Container>? Containers
-  {
-    get => _containers;
-    set => this.RaiseAndSetIfChanged(ref _containers, value);
-  }
+  [Reactive]
+  public IEnumerable<Container>? Containers { get; set; }
 
-  private Container? _selectedContainer;
-
-  public Container? SelectedContainer
-  {
-    get => _selectedContainer;
-    set => this.RaiseAndSetIfChanged(ref _selectedContainer, value);
-  }
+  [Reactive]
+  public Container? SelectedContainer { get; set; }
 
   private ObservableAsPropertyHelper<IEnumerable<FileInformation>> _fileInformation = null!;
   public IEnumerable<FileInformation> FileInformation => _fileInformation.Value;
 
-  private FileInformation? _selectedFile;
+  [Reactive]
+  public FileInformation? SelectedFile { get; set; }
 
-  public FileInformation? SelectedFile
-  {
-    get => _selectedFile;
-    set => this.RaiseAndSetIfChanged(ref _selectedFile, value);
-  }
+  [Reactive]
+  public string? SelectedPath { get; set; }
 
-  private string? _selectedPath;
+  [Reactive]
+  public Message Message { get; set; }
 
-  public string? SelectedPath
-  {
-    get => _selectedPath;
-    set => this.RaiseAndSetIfChanged(ref _selectedPath, value);
-  }
-
-  private Message _message = null!;
-  public Message Message
-  {
-    get => _message;
-    set => this.RaiseAndSetIfChanged(ref _message, value);
-  }
-  
   public ReactiveCommand<Unit, Unit> DownloadCommand { get; private set; } = null!;
   public ReactiveCommand<Unit, Unit> DownloadLogCommand { get; private set; } = null!;
   public ReactiveCommand<Unit, Unit> ParentCommand { get; private set; } = null!;
@@ -143,7 +102,7 @@ public class MainWindowViewModel : ViewModelBase
       .ObserveOn(RxApp.TaskpoolScheduler)
       .Subscribe(_ => SelectedPath = "/");
   }
-  
+
   private void RegisterReadContainers()
   {
     // read the file information when the path changes
@@ -155,7 +114,7 @@ public class MainWindowViewModel : ViewModelBase
         : x.Item1.Containers.Select(c => new Container {Name = c}))
       .ObserveOn(RxApp.MainThreadScheduler)
       .Subscribe( x => Containers = x);
-    
+
     this.WhenAnyValue(x => x.Containers)
       .Throttle(new TimeSpan(10))
       .ObserveOn(RxApp.MainThreadScheduler)
@@ -318,14 +277,14 @@ public class MainWindowViewModel : ViewModelBase
     }
     catch (Exception e)
     {
-      RxApp.MainThreadScheduler.Schedule(Action);    
+      RxApp.MainThreadScheduler.Schedule(Action);
       return new List<Namespace>();
 
       async void Action() => await ShowErrorMessage(e.Message);
     }
   }
-  
-  private IList<FileInformation> GetFileInformation(IKubernetesService kubernetesService, 
+
+  private IList<FileInformation> GetFileInformation(IKubernetesService kubernetesService,
     string path, Pod pod, Namespace nameSpace, Container container)
   {
     var kubernetesFileInformation = kubernetesService.GetFiles(
@@ -333,7 +292,7 @@ public class MainWindowViewModel : ViewModelBase
 
     // when the path is root, we don't want to show the parent directory
     if (SelectedPath is not { Length: > 1 }) return kubernetesFileInformation;
-    
+
     // add the parent directory
     var parent = SelectedPath[..SelectedPath.LastIndexOf('/')];
     if (string.IsNullOrEmpty(parent))
@@ -358,7 +317,7 @@ public class MainWindowViewModel : ViewModelBase
       IsError = false
     };
   }
-  
+
   private async Task ShowErrorMessage(string message)
   {
     Message = new Message
@@ -370,7 +329,7 @@ public class MainWindowViewModel : ViewModelBase
     await Task.Delay(7000);
     HideWorkingMessage();
   }
-  
+
   private void HideWorkingMessage()
   {
     Message = new Message

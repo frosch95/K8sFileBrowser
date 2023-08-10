@@ -19,6 +19,8 @@ public class FileInformation
     public string Size { get; set; } = string.Empty;
     public DateTimeOffset? Date { get; set; }
 
+    public string DateTimeOffsetString => Date?.ToString("yyyy-MM-dd HH:mm:ss") ?? string.Empty;
+
     public bool IsFile => Type == FileType.File;
     public bool IsDirectory => Type == FileType.Directory;
     public bool IsUnknown => Type == FileType.Unknown;

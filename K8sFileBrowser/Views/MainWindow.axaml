@@ -90,7 +90,9 @@
                         </ComboBox>
                     </StackPanel>
                     <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" Margin="10" HorizontalAlignment="Right">
-
+                        <Button Command="{Binding DownloadLogCommand}" VerticalAlignment="Center" ToolTip.Tip="Download Container Log" Margin="0 0 48 0 ">
+                            <PathIcon Data="{StaticResource document_one_page_regular}"></PathIcon>
+                        </Button>
                         <Button Command="{Binding ParentCommand}" VerticalAlignment="Center" ToolTip.Tip="Go To Parent Directory">
                             <PathIcon Data="{StaticResource arrow_curve_up_left_regular}"></PathIcon>
                         </Button>
@@ -99,9 +101,6 @@
                         </Button>
                         <Button Command="{Binding DownloadCommand}" VerticalAlignment="Center" ToolTip.Tip="Download File">
                             <PathIcon Data="{StaticResource arrow_download_regular}"></PathIcon>
-                        </Button>
-                        <Button Command="{Binding DownloadLogCommand}" VerticalAlignment="Center" ToolTip.Tip="Download Pod Log">
-                            <PathIcon Data="{StaticResource document_one_page_regular}"></PathIcon>
                         </Button>
                     </StackPanel>
                 </Grid>
@@ -121,11 +120,11 @@
                         <Setter Property="Padding" Value="10"></Setter>
                     </Style>
                     <Style Selector="DataGridCell">
-                        <Setter Property="FontSize" Value="12"></Setter>
+                        <Setter Property="FontSize" Value="14"></Setter>
                     </Style>
                 </DataGrid.Styles>
                 <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="Type">
+                    <DataGridTemplateColumn Header="Type" CanUserSort="False">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="models:FileInformation">
                                 <Border ToolTip.Tip="{Binding Type}" Background="Transparent">
@@ -144,7 +143,7 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Name" Width="*">
+                    <DataGridTemplateColumn Header="Name" Width="*" CanUserSort="False">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="models:FileInformation">
                                 <Border Background="Transparent">
@@ -158,11 +157,11 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Size">
+                    <DataGridTemplateColumn Header="Size" CanUserSort="False">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="models:FileInformation">
                                 <Border Background="Transparent">
-                                    <TextBlock Text="{Binding Size}" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Size}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0 0 8 0"/>
                                     <Interaction.Behaviors>
                                         <EventTriggerBehavior EventName="DoubleTapped">
                                             <InvokeCommandAction Command="{Binding ((vm:MainWindowViewModel)DataContext).OpenCommand, RelativeSource={RelativeSource AncestorType=Window }}" />
@@ -172,14 +171,14 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Date">
+                    <DataGridTemplateColumn Header="Date" CanUserSort="False">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="models:FileInformation">
                                 <Border Background="Transparent">
-                                    <TextBlock Text="{Binding Date}" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding DateTimeOffsetString}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0 0 8 0"/>
                                     <Interaction.Behaviors>
                                         <EventTriggerBehavior EventName="DoubleTapped">
-                                            <InvokeCommandAction Command="{Binding ((vm:MainWindowViewModel)DataContext).OpenCommand, RelativeSource={RelativeSource AncestorType=Window }}" />
+                                            <InvokeCommandAction Command="{Binding ((vm:MainWindowViewModel)DataContext).OpenCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
                                         </EventTriggerBehavior>
                                     </Interaction.Behaviors>
                                 </Border>
