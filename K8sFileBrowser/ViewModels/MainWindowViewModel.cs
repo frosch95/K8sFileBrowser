@@ -133,11 +133,11 @@ public class MainWindowViewModel : ViewModelBase
   {
     // read the file information when the path changes
     this
-      .WhenAnyValue(c => c.SelectedContainer)
+      .WhenAnyValue(c => c.SelectedContainer, c => c.SelectedPath)
       .Throttle(new TimeSpan(10))
-      .Select(x => x == null
+      .Select(x => x.Item1 == null || x.Item2 == null
         ? new List<FileInformation>()
-        : GetFileInformation(kubernetesService, SelectedPath!, SelectedPod!, SelectedNamespace!, x))
+        : GetFileInformation(kubernetesService, x.Item2, SelectedPod!, SelectedNamespace!, x.Item1))
       .ObserveOn(RxApp.MainThreadScheduler)
       .Subscribe(x => FileInformation = x);
   }

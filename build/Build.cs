@@ -11,21 +11,21 @@ class Build : NukeBuild
 {
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
-    
+
     [Parameter] readonly string Version = "1.0.0";
-    
+
     AbsolutePath SourceDirectory => RootDirectory / "K8sFileBrowser";
     AbsolutePath OutputDirectory => RootDirectory / "output";
     AbsolutePath WinOutputDirectory => OutputDirectory / "win";
     AbsolutePath LinuxOutputDirectory => OutputDirectory / "linux";
-    
+
     AbsolutePath WinZip => OutputDirectory / $"K8sFileBrowser_{Version}.zip";
     AbsolutePath LinuxGz => OutputDirectory / $"K8sFileBrowser_{Version}.tgz";
-    
+
     AbsolutePath ProjectFile => SourceDirectory / "K8sFileBrowser.csproj";
 
     readonly string ExcludedExtensions = "pdb";
-    
+
     public static int Main () => Execute<Build>(x => x.Publish);
 
 
@@ -37,14 +37,6 @@ class Build : NukeBuild
             OutputDirectory.DeleteDirectory();
         });
 
-    Target Restore => _ => _
-        .Executes(() =>
-        {
-            DotNet($"restore {ProjectFile}");
-            //DotNetTasks.DotNetRestore(new DotNetRestoreSettings());
-        });
-
-    
     Target PublishWin => _ => _
         .DependsOn(Clean)
         .Executes(() =>
@@ -62,18 +54,17 @@ class Build : NukeBuild
                 .SetCopyright("Copyright (c) 2023")
                 .SetVersion(Version)
                 .SetProcessArgumentConfigurator(_ => _
-                    .Add("-p:IncludeNativeLibrariesForSelfExtract=true"))
-                .EnableNoRestore());
-            
+                    .Add("-p:IncludeNativeLibrariesForSelfExtract=true")));
+
             WinOutputDirectory.ZipTo(
                 WinZip,
                 filter: x => !x.HasExtension(ExcludedExtensions),
                 compressionLevel: CompressionLevel.SmallestSize,
                 fileMode: FileMode.CreateNew);
         });
-    
+
     Target PublishLinux => _ => _
-        .DependsOn(Clean)
+      .DependsOn(Clean)
         .Executes(() =>
         {
             DotNetPublish(s => s
@@ -89,15 +80,14 @@ class Build : NukeBuild
                 .SetCopyright("Copyright (c) 2023")
                 .SetVersion(Version)
                 .SetProcessArgumentConfigurator(_ => _
-                    .Add("-p:IncludeNativeLibrariesForSelfExtract=true"))
-                .EnableNoRestore());
-            
+                    .Add("-p:IncludeNativeLibrariesForSelfExtract=true")));
+
             LinuxOutputDirectory.TarGZipTo(
                 LinuxGz,
                 filter: x => !x.HasExtension(ExcludedExtensions),
                 fileMode: FileMode.CreateNew);
         });
-    
+
     Target Publish => _ => _
         .DependsOn(PublishWin, PublishLinux)
         .Executes(() =>
