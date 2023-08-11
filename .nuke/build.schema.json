@@ -75,8 +75,7 @@
               "Clean",
               "Publish",
               "PublishLinux",
-              "PublishWin",
-              "Restore"
+              "PublishWin"
             ]
           }
         },
@@ -89,8 +88,7 @@
               "Clean",
               "Publish",
               "PublishLinux",
-              "PublishWin",
-              "Restore"
+              "PublishWin"
             ]
           }
         },
