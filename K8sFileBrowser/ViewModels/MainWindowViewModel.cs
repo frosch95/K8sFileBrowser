@@ -14,20 +14,20 @@ namespace K8sFileBrowser.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
-  private ObservableAsPropertyHelper<IEnumerable<ClusterContext>> _clusterContexts = null!;
-  public IEnumerable<ClusterContext> ClusterContexts => _clusterContexts.Value;
+  [Reactive]
+  public IEnumerable<ClusterContext> ClusterContexts { get; set; } = null!;
 
   [Reactive]
   public ClusterContext? SelectedClusterContext { get; set; }
 
   [Reactive]
-  public IEnumerable<Namespace> Namespaces { get; set; }
+  public IEnumerable<Namespace> Namespaces { get; set; } = null!;
 
   [Reactive]
   public Namespace? SelectedNamespace { get; set; }
 
-  private ObservableAsPropertyHelper<IEnumerable<Pod>> _pods = null!;
-  public IEnumerable<Pod> Pods => _pods.Value;
+  [Reactive]
+  public IEnumerable<Pod> Pods  { get; set; } = null!;
 
   [Reactive]
   public Pod? SelectedPod { get; set; }
@@ -38,8 +38,8 @@ public class MainWindowViewModel : ViewModelBase
   [Reactive]
   public Container? SelectedContainer { get; set; }
 
-  private ObservableAsPropertyHelper<IEnumerable<FileInformation>> _fileInformation = null!;
-  public IEnumerable<FileInformation> FileInformation => _fileInformation.Value;
+  [Reactive]
+  public IEnumerable<FileInformation> FileInformation { get; set; } = null!;
 
   [Reactive]
   public FileInformation? SelectedFile { get; set; }
@@ -48,7 +48,7 @@ public class MainWindowViewModel : ViewModelBase
   public string? SelectedPath { get; set; }
 
   [Reactive]
-  public Message Message { get; set; }
+  public Message Message { get; set; } = null!;
 
   public ReactiveCommand<Unit, Unit> DownloadCommand { get; private set; } = null!;
   public ReactiveCommand<Unit, Unit> DownloadLogCommand { get; private set; } = null!;
@@ -86,18 +86,22 @@ public class MainWindowViewModel : ViewModelBase
     // load the cluster contexts when the view model is created
     var loadContexts = ReactiveCommand
       .Create<Unit, IEnumerable<ClusterContext>>(_ => kubernetesService.GetClusterContexts());
-    _clusterContexts = loadContexts.Execute().ToProperty(
-      this, x => x.ClusterContexts, scheduler: RxApp.MainThreadScheduler);
-
-    // select the current cluster context
-    SelectedClusterContext = ClusterContexts
-      .FirstOrDefault(x => x.Name == kubernetesService.GetCurrentContext());
+    loadContexts.Execute()
+      .Throttle(new TimeSpan(10))
+      .ObserveOn(RxApp.MainThreadScheduler)
+      .Subscribe(x =>
+      {
+        ClusterContexts = x;
+        // select the current cluster context
+        SelectedClusterContext = ClusterContexts
+          .FirstOrDefault(x => x.Name == kubernetesService.GetCurrentContext());
+      });
   }
 
   private void RegisterResetPath()
   {
     // reset the path when the pod or namespace changes
-    this.WhenAnyValue(c => c.SelectedPod, c => c.SelectedNamespace)
+    this.WhenAnyValue(c => c.SelectedContainer)
       .Throttle(new TimeSpan(10))
       .ObserveOn(RxApp.TaskpoolScheduler)
       .Subscribe(_ => SelectedPath = "/");
@@ -107,13 +111,17 @@ public class MainWindowViewModel : ViewModelBase
   {
     // read the file information when the path changes
     this
-      .WhenAnyValue(c => c.SelectedPod, c => c.SelectedNamespace)
+      .WhenAnyValue(c => c.SelectedPod)
       .Throttle(new TimeSpan(10))
-      .Select(x => x.Item2 == null || x.Item1 == null
+      .Select(x => x == null
         ? new List<Container>()
-        : x.Item1.Containers.Select(c => new Container {Name = c}))
+        : x.Containers.Select(c => new Container {Name = c}))
       .ObserveOn(RxApp.MainThreadScheduler)
-      .Subscribe( x => Containers = x);
+      .Subscribe( x =>
+      {
+        Containers = x;
+        FileInformation = new List<FileInformation>();
+      });
 
     this.WhenAnyValue(x => x.Containers)
       .Throttle(new TimeSpan(10))
@@ -124,25 +132,30 @@ public class MainWindowViewModel : ViewModelBase
   private void RegisterReadFiles(IKubernetesService kubernetesService)
   {
     // read the file information when the path changes
-    _fileInformation = this
-      .WhenAnyValue(c => c.SelectedPath, c => c.SelectedPod, c => c.SelectedNamespace, c => c.SelectedContainer)
+    this
+      .WhenAnyValue(c => c.SelectedContainer)
       .Throttle(new TimeSpan(10))
-      .Select(x => x.Item3 == null || x.Item2 == null || x.Item1 == null || x.Item4 == null
+      .Select(x => x == null
         ? new List<FileInformation>()
-        : GetFileInformation(kubernetesService, x.Item1, x.Item2, x.Item3, x.Item4))
+        : GetFileInformation(kubernetesService, SelectedPath!, SelectedPod!, SelectedNamespace!, x))
       .ObserveOn(RxApp.MainThreadScheduler)
-      .ToProperty(this, x => x.FileInformation);
+      .Subscribe(x => FileInformation = x);
   }
 
   private void RegisterReadPods()
   {
     // read the pods when the namespace changes
-    _pods = this
+    this
       .WhenAnyValue(c => c.SelectedNamespace)
       .Throttle(new TimeSpan(10))
       .SelectMany(ns => GetPodsForNamespace.Execute(ns!))
       .ObserveOn(RxApp.MainThreadScheduler)
-      .ToProperty(this, x => x.Pods);
+      .Subscribe(x =>
+      {
+        Pods = x;
+        Containers = null;
+        FileInformation = new List<FileInformation>();
+      });
   }
 
   private void RegisterReadNamespaces(IKubernetesService kubernetesService)
@@ -153,7 +166,13 @@ public class MainWindowViewModel : ViewModelBase
       .Throttle(new TimeSpan(10))
       .SelectMany(context => GetClusterContextAsync(context, kubernetesService))
       .ObserveOn(RxApp.MainThreadScheduler)
-      .Subscribe(ns => Namespaces = ns);
+      .Subscribe(ns =>
+      {
+        Namespaces = ns;
+        Pods = new List<Pod>();
+        Containers = null;
+        FileInformation = new List<FileInformation>();
+      });
   }
 
   private void ConfigureGetPodsForNamespaceCommand(IKubernetesService kubernetesService)
