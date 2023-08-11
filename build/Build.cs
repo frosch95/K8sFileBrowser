@@ -31,7 +31,6 @@ class Build : NukeBuild
 
 
     Target Clean => _ => _
-        .Before(Restore)
         .Executes(() =>
         {
             OutputDirectory.DeleteDirectory();
