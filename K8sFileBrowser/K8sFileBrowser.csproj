@@ -9,7 +9,7 @@
         <Configurations>Debug;Release</Configurations>
         <Platforms>AnyCPU</Platforms>
         <ApplicationIcon>Assets/app.ico</ApplicationIcon>
-        <Version>0.0.9</Version>
+        <Version>0.1.1</Version>
         <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

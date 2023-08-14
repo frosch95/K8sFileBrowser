@@ -17,12 +17,12 @@ namespace K8sFileBrowser.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
-  
+
   #region Properties
-  
+
   [Reactive]
   public string? Version { get; set; } = null!;
-  
+
   [Reactive]
   public IEnumerable<ClusterContext> ClusterContexts { get; set; } = null!;
 
@@ -58,11 +58,11 @@ public class MainWindowViewModel : ViewModelBase
 
   [Reactive]
   public Message Message { get; set; } = null!;
-  
+
   #endregion Properties
 
   #region Commands
-  
+
   public ReactiveCommand<Unit, Unit> DownloadCommand { get; private set; } = null!;
   public ReactiveCommand<Unit, Unit> DownloadLogCommand { get; private set; } = null!;
   public ReactiveCommand<Unit, Unit> ParentCommand { get; private set; } = null!;
@@ -96,7 +96,7 @@ public class MainWindowViewModel : ViewModelBase
   }
 
   #region Property Subscriptions
-  
+
   private void InitiallyLoadContexts(IKubernetesService kubernetesService)
   {
     // load the cluster contexts when the view model is created
@@ -115,7 +115,7 @@ public class MainWindowViewModel : ViewModelBase
           .FirstOrDefault(c => c.Name == kubernetesService.GetCurrentContext());
       });
   }
-  
+
   private void RegisterReadNamespaces(IKubernetesService kubernetesService)
   {
     // read the cluster contexts
@@ -130,7 +130,7 @@ public class MainWindowViewModel : ViewModelBase
         Namespaces = ns;
       });
   }
-  
+
   private void RegisterReadPods()
   {
     // read the pods when the namespace changes
@@ -146,7 +146,7 @@ public class MainWindowViewModel : ViewModelBase
         Pods = x;
       });
   }
-  
+
   private void RegisterReadContainers()
   {
     // read the file information when the path changes
@@ -290,11 +290,11 @@ public class MainWindowViewModel : ViewModelBase
     OpenCommand.ThrownExceptions.ObserveOn(RxApp.MainThreadScheduler)
       .Subscribe(ShowErrorMessage);
   }
-  
+
   #endregion Configure Commands
 
   #region Get Data
-  
+
   private static async Task<IEnumerable<Pod>> PodsAsync(Namespace? ns, IKubernetesService kubernetesService)
   {
     if (ns == null)
@@ -346,67 +346,74 @@ public class MainWindowViewModel : ViewModelBase
       Parent = parent
     }).ToList();
   }
-  
+
   #endregion Get Data
-  
+
   #region Reset Data
-  
+
   private void ResetPath()
   {
     FileInformation = new List<FileInformation>();
     SelectedPath = null;
     SelectedContainer = null;
-  }  
-  
+  }
+
   private void ResetContainers()
   {
     ResetPath();
     Containers = new List<Container>();
     SelectedPod = null;
 
-  }  
-  
+  }
+
   private void ResetPods()
   {
     ResetContainers();
     SelectedNamespace = null;
     Pods = new List<Pod>();
 
-  }  
-  
+  }
+
   private void ResetNamespaces()
   {
     ResetPods();
     Namespaces = new List<Namespace>();
     SelectedClusterContext = null;
-  }  
-  
+  }
+
   #endregion Reset Data
-  
+
   #region show messages
-  
+
   private void ShowWorkingMessage(string message)
   {
-    Message = new Message
+    RxApp.MainThreadScheduler.Schedule(Action);
+    return;
+
+    void Action()
     {
-      IsVisible = true,
-      Text = message,
-      IsError = false
-    };
+      Message = new Message
+      {
+        IsVisible = true,
+        Text = message,
+        IsError = false
+      };
+    }
   }
 
   private void ShowErrorMessage(string message)
   {
+    RxApp.MainThreadScheduler.Schedule(Action);
+    return;
+
     async void Action()
     {
       Message = new Message { IsVisible = true, Text = message, IsError = true };
       await Task.Delay(7000);
       HideWorkingMessage();
     }
-
-    RxApp.MainThreadScheduler.Schedule(Action);
   }
-  
+
   private void ShowErrorMessage(Exception exception)
   {
     // ReSharper disable once TemplateIsNotCompileTimeConstantProblem
@@ -423,6 +430,6 @@ public class MainWindowViewModel : ViewModelBase
       IsError = false
     });
   }
-  
+
   #endregion show messages
 }
