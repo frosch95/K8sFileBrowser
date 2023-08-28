@@ -21,7 +21,7 @@ public class MainWindowViewModel : ViewModelBase
   #region Properties
 
   [Reactive]
-  public string? Version { get; set; } = null!;
+  public string? Version { get; set; }
 
   [Reactive]
   public IEnumerable<ClusterContext> ClusterContexts { get; set; } = null!;
@@ -58,6 +58,8 @@ public class MainWindowViewModel : ViewModelBase
 
   [Reactive]
   public Message Message { get; set; } = null!;
+  
+  private string _lastDirectory = ".";
 
   #endregion Properties
 
@@ -232,9 +234,10 @@ public class MainWindowViewModel : ViewModelBase
       await Observable.StartAsync(async () =>
       {
         var fileName = SelectedPod?.Name + ".log";
-        var saveFileName = await ApplicationHelper.SaveFile(".", fileName);
+        var saveFileName = await ApplicationHelper.SaveFile(_lastDirectory, fileName);
         if (saveFileName != null)
         {
+          SetLastDirectory(saveFileName);
           ShowWorkingMessage("Downloading Log...");
           await kubernetesService.DownloadLog(SelectedNamespace, SelectedPod, SelectedContainer, saveFileName);
           HideWorkingMessage();
@@ -258,9 +261,10 @@ public class MainWindowViewModel : ViewModelBase
       {
         var fileName = SelectedFile!.Name.Substring(SelectedFile!.Name.LastIndexOf('/') + 1,
           SelectedFile!.Name.Length - SelectedFile!.Name.LastIndexOf('/') - 1);
-        var saveFileName = await ApplicationHelper.SaveFile(".", fileName);
+        var saveFileName = await ApplicationHelper.SaveFile(_lastDirectory, fileName);
         if (saveFileName != null)
         {
+          SetLastDirectory(saveFileName);
           ShowWorkingMessage("Downloading File...");
           await kubernetesService.DownloadFile(SelectedNamespace, SelectedPod, SelectedContainer, SelectedFile, saveFileName);
           HideWorkingMessage();
@@ -270,6 +274,11 @@ public class MainWindowViewModel : ViewModelBase
 
     DownloadCommand.ThrownExceptions.ObserveOn(RxApp.MainThreadScheduler)
       .Subscribe(ShowErrorMessage);
+  }
+
+  private void SetLastDirectory(string saveFileName)
+  {
+    _lastDirectory = saveFileName.Substring(0, saveFileName.LastIndexOf('\\'));
   }
 
   private void ConfigureOpenDirectoryCommand()
