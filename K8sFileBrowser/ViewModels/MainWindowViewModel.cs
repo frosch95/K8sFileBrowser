@@ -110,7 +110,7 @@ public class MainWindowViewModel : ViewModelBase
       .Subscribe(x =>
       {
         ResetNamespaces();
-        ClusterContexts = x;
+        ClusterContexts = x.OrderBy(c => c.Name);
 
         // select the current cluster context
         SelectedClusterContext = ClusterContexts
@@ -129,7 +129,7 @@ public class MainWindowViewModel : ViewModelBase
       .Subscribe(ns =>
       {
         ResetPods();
-        Namespaces = ns;
+        Namespaces = ns.OrderBy(n => n.Name);
       });
   }
 
@@ -145,7 +145,7 @@ public class MainWindowViewModel : ViewModelBase
       .Subscribe(x =>
       {
         ResetContainers();
-        Pods = x;
+        Pods = x.OrderBy(p => p.Name);
       });
   }
 
