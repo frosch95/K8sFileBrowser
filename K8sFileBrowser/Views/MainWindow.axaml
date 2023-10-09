@@ -94,6 +94,9 @@
                         <Button Command="{Binding DownloadLogCommand}" VerticalAlignment="Center" ToolTip.Tip="Download Container Log" Margin="0 0 48 0 ">
                             <PathIcon Data="{StaticResource document_one_page_regular}"></PathIcon>
                         </Button>
+                        <Button Command="{Binding RefreshCommand}" VerticalAlignment="Center" ToolTip.Tip="Refresh Directory">
+                            <PathIcon Data="{StaticResource arrow_sync_circle_regular}"></PathIcon>
+                        </Button>
                         <Button Command="{Binding ParentCommand}" VerticalAlignment="Center" ToolTip.Tip="Go To Parent Directory">
                             <PathIcon Data="{StaticResource arrow_curve_up_left_regular}"></PathIcon>
                         </Button>

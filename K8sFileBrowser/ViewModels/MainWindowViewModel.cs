@@ -67,6 +67,7 @@ public class MainWindowViewModel : ViewModelBase
 
   public ReactiveCommand<Unit, Unit> DownloadCommand { get; private set; } = null!;
   public ReactiveCommand<Unit, Unit> DownloadLogCommand { get; private set; } = null!;
+  public ReactiveCommand<Unit, Unit> RefreshCommand { get; private set; } = null!;
   public ReactiveCommand<Unit, Unit> ParentCommand { get; private set; } = null!;
   public ReactiveCommand<Unit, Unit> OpenCommand { get; private set; } = null!;
   private ReactiveCommand<Namespace, IEnumerable<Pod>> GetPodsForNamespace { get; set; } = null!;
@@ -82,6 +83,7 @@ public class MainWindowViewModel : ViewModelBase
     // commands
     ConfigureOpenDirectoryCommand();
     ConfigureDownloadFileCommand(kubernetesService);
+    ConfigureRefreshCommand(kubernetesService);
     ConfigureDownloadLogCommand(kubernetesService);
     ConfigureParentDirectoryCommand();
     ConfigureGetPodsForNamespaceCommand(kubernetesService);
@@ -246,6 +248,24 @@ public class MainWindowViewModel : ViewModelBase
     }, isSelectedPod, RxApp.MainThreadScheduler);
 
     DownloadLogCommand.ThrownExceptions.ObserveOn(RxApp.MainThreadScheduler)
+      .Subscribe(ShowErrorMessage);
+  }
+  
+  private void ConfigureRefreshCommand(IKubernetesService kubernetesService)
+  {
+    var isSelectedContainer = this
+      .WhenAnyValue(x => x.SelectedContainer)
+      .Select(x => x != null);
+
+    RefreshCommand = ReactiveCommand.CreateFromTask(async () =>
+    {
+      await Observable.Start(() =>
+      {
+        FileInformation = GetFileInformation(kubernetesService, SelectedPath!, SelectedPod!, SelectedNamespace!, SelectedContainer!);
+      }, RxApp.TaskpoolScheduler);
+    }, isSelectedContainer, RxApp.MainThreadScheduler);
+
+    RefreshCommand.ThrownExceptions.ObserveOn(RxApp.MainThreadScheduler)
       .Subscribe(ShowErrorMessage);
   }
 
