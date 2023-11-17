@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
@@ -298,7 +299,7 @@ public class MainWindowViewModel : ViewModelBase
 
   private void SetLastDirectory(string saveFileName)
   {
-    _lastDirectory = saveFileName.Substring(0, saveFileName.LastIndexOf('\\'));
+    _lastDirectory = saveFileName.Substring(0, saveFileName.LastIndexOf(Path.DirectorySeparatorChar));
   }
 
   private void ConfigureOpenDirectoryCommand()

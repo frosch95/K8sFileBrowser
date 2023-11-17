@@ -10,7 +10,7 @@
         <Platforms>AnyCPU</Platforms>
         <ApplicationIcon>Assets/app.ico</ApplicationIcon>
         <Version>0.1.2</Version>
-        <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
+        <RuntimeIdentifiers>win-x64;linux-x64;osx-arm64</RuntimeIdentifiers>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
       <DefineConstants>TRACE</DefineConstants>

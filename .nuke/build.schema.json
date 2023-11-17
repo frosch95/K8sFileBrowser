@@ -75,6 +75,7 @@
               "Clean",
               "Publish",
               "PublishLinux",
+              "PublishOsx",
               "PublishWin"
             ]
           }
@@ -88,6 +89,7 @@
               "Clean",
               "Publish",
               "PublishLinux",
+              "PublishOsx",
               "PublishWin"
             ]
           }
