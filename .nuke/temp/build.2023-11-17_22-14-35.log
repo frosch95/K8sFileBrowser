@@ -1,0 +1,66 @@
+V |                      | ArgumentsFromParametersFile.OnBuildCreated (150)
+V |                      | Passing value for <unresolved> (K8sFileBrowser.sln)
+V |                      | HandleReSharperSurrogateArguments.OnBuildCreated (150)
+V |                      | InjectParameterValues.OnBuildCreated (100)
+V |                      | HandleShellCompletion.OnBuildCreated (75)
+V |                      | GenerateBuildServerConfigurations.OnBuildCreated (50)
+V |                      | InvokeBuildServerConfigurationGeneration.OnBuildCreated (45)
+V |                      | UpdateNotification.OnBuildCreated (10)
+V |                      | UnsetVisualStudioEnvironmentVariables.OnBuildCreated (0)
+V |                      | HandleVisualStudioDebugging.OnBuildCreated (0)
+V |                      | EventInvoker.OnBuildCreated (-3.4028235E+38)
+V |                      | HandlePlanRequests.OnBuildInitialized (10)
+V |                      | HandleHelpRequests.OnBuildInitialized (5)
+V |                      | Telemetry.OnBuildInitialized (0)
+V |                      | Sending BuildStarted telemetry event ...
+V |                      |   build_components         = 
+V |                      |   build_type               = Project
+V |                      |   compile_time             = <null>
+V |                      |   config_generators        = 
+V |                      |   host                     = Rider
+V |                      |   num_custom_components    = 0
+V |                      |   num_custom_extensions    = 0
+V |                      |   num_partitioned_targets  = 0
+V |                      |   num_secrets              = 0
+V |                      |   num_targets              = 5
+V |                      |   os_architecture          = X64
+V |                      |   os_platform              = Windows
+V |                      |   repo_branch              = <null>
+V |                      |   repo_commit              = 825465
+V |                      |   repo_provider            = GitHub
+V |                      |   repo_url                 = 79771b
+V |                      |   target_framework         = .NETCoreApp,Version=v6.0
+V |                      |   version_dotnet_sdk       = 8.0.100
+V |                      |   version_nuke_common      = 7.0.2
+V |                      |   version_nuke_global_tool = <null>
+V |                      | InjectNonParameterValues.OnBuildInitialized (-100)
+V |                      | EventInvoker.OnBuildInitialized (-3.4028235E+38)
+V | Clean                | EventInvoker.OnTargetRunning (-3.4028235E+38)
+V | Clean                | Telemetry.OnTargetSucceeded (0)
+V | Clean                | EventInvoker.OnTargetSucceeded (-3.4028235E+38)
+V | PublishOsx           | EventInvoker.OnTargetRunning (-3.4028235E+38)
+I | PublishOsx           | > "C:\Program Files\dotnet\dotnet.exe" publish D:\projects\K8sFileBrowser\K8sFileBrowser\K8sFileBrowser.csproj --configuration Debug --framework net7.0 --output D:\projects\K8sFileBrowser\output\osx --self-contained True --runtime osx-arm64 /property:PublishSingleFile=True /property:PublishReadyToRun=True /property:Authors="Andreas Billmann" /property:Copyright="Copyright (c) 2023" /property:Version=1.0.0 -p:IncludeNativeLibrariesForSelfExtract=true
+D | PublishOsx           | MSBuild-Version 17.8.3+195e7f5a3 für .NET
+D | PublishOsx           |   Wiederherzustellende Projekte werden ermittelt...
+D | PublishOsx           |   "D:\projects\K8sFileBrowser\K8sFileBrowser\K8sFileBrowser.csproj" wiederhergestellt (in "469 ms").
+W | PublishOsx           | D:\projects\K8sFileBrowser\K8sFileBrowser\ViewLocator.cs(23,17): warning CS8767: Die NULL-Zulässigkeit von Verweistypen im Typ des Parameters "data" von "bool ViewLocator.Match(object data)" entspricht (möglicherweise aufgrund von Attributen für die NULL-Zulässigkeit) nicht dem implizit implementierten Member "bool IDataTemplate.Match(object? data)". [D:\projects\K8sFileBrowser\K8sFileBrowser\K8sFileBrowser.csproj]
+W | PublishOsx           | D:\projects\K8sFileBrowser\K8sFileBrowser\ViewLocator.cs(10,20): warning CS8767: Die NULL-Zulässigkeit von Verweistypen im Typ des Parameters "data" von "Control ViewLocator.Build(object data)" entspricht (möglicherweise aufgrund von Attributen für die NULL-Zulässigkeit) nicht dem implizit implementierten Member "Control? ITemplate<object?, Control?>.Build(object? param)". [D:\projects\K8sFileBrowser\K8sFileBrowser\K8sFileBrowser.csproj]
+D | PublishOsx           |   Von "obj\Debug\net7.0\osx-arm64\refint\K8sFileBrowser.dll" konnte keine MVID extrahiert werden. Sind Sie sicher, dass es sich dabei um eine Referenzassembly handelt?
+D | PublishOsx           |   K8sFileBrowser -> D:\projects\K8sFileBrowser\K8sFileBrowser\bin\Debug\net7.0\osx-arm64\K8sFileBrowser.dll
+D | PublishOsx           |   K8sFileBrowser -> D:\projects\K8sFileBrowser\output\osx\
+E | PublishOsx           | Target PublishOsx has thrown an exception
+System.IO.DirectoryNotFoundException: Could not find a part of the path 'D:\projects\K8sFileBrowser\output\linux'.
+   at System.IO.Enumeration.FileSystemEnumerator`1.CreateDirectoryHandle(String path, Boolean ignoreNotFound)
+   at System.IO.Enumeration.FileSystemEnumerator`1.Init()
+   at System.IO.Enumeration.FileSystemEnumerator`1..ctor(String directory, Boolean isNormalized, EnumerationOptions options)
+   at System.IO.Enumeration.FileSystemEnumerable`1..ctor(String directory, FindTransform transform, EnumerationOptions options, Boolean isNormalized)
+   at System.IO.Enumeration.FileSystemEnumerableFactory.UserFiles(String directory, String expression, EnumerationOptions options)
+   at System.IO.Directory.InternalEnumeratePaths(String path, String searchPattern, SearchTarget searchTarget, EnumerationOptions options)
+   at System.IO.Directory.EnumerateFiles(String path, String searchPattern, SearchOption searchOption)
+   at Nuke.Common.IO.AbsolutePathExtensions.GetFiles(AbsolutePath path, String pattern, Int32 depth, FileAttributes attributes) in /_/source/Nuke.Utilities/IO/AbsolutePath.Children.cs:line 29
+   at Nuke.Common.IO.CompressionExtensions.TarGZipTo(AbsolutePath directory, AbsolutePath archiveFile, Func`2 filter, FileMode fileMode) in /_/source/Nuke.Utilities.IO.Compression/CompressionExtensions.cs:line 107
+   at Build.<get_PublishOsx>b__27_1() in D:\projects\K8sFileBrowser\build\Build.cs:line 110
+   at Nuke.Common.Execution.BuildExecutor.<>c.<Execute>b__4_2(Action x) in /_/source/Nuke.Build/Execution/BuildExecutor.cs:line 119
+   at System.Collections.Generic.List`1.ForEach(Action`1 action)
+   at Nuke.Common.Execution.BuildExecutor.Execute(NukeBuild build, ExecutableTarget target, IReadOnlyCollection`1 previouslyExecutedTargets, Boolean failureMode) in /_/source/Nuke.Build/Execution/BuildExecutor.cs:line 119
+V | PublishOsx           | EventInvoker.OnTargetFailed (-3.4028235E+38)
