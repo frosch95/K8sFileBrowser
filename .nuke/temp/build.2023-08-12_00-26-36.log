@@ -1,0 +1,67 @@
+V |                      | ArgumentsFromParametersFile.OnBuildCreated (150)
+V |                      | Passing value for <unresolved> (K8sFileBrowser.sln)
+V |                      | HandleReSharperSurrogateArguments.OnBuildCreated (150)
+V |                      | InjectParameterValues.OnBuildCreated (100)
+V |                      | HandleShellCompletion.OnBuildCreated (75)
+V |                      | GenerateBuildServerConfigurations.OnBuildCreated (50)
+V |                      | InvokeBuildServerConfigurationGeneration.OnBuildCreated (45)
+V |                      | UpdateNotification.OnBuildCreated (10)
+V |                      | UnsetVisualStudioEnvironmentVariables.OnBuildCreated (0)
+V |                      | HandleVisualStudioDebugging.OnBuildCreated (0)
+V |                      | EventInvoker.OnBuildCreated (-3.4028235E+38)
+V |                      | HandlePlanRequests.OnBuildInitialized (10)
+V |                      | HandleHelpRequests.OnBuildInitialized (5)
+V |                      | Telemetry.OnBuildInitialized (0)
+V |                      | Sending BuildStarted telemetry event ...
+V |                      |   build_components         = 
+V |                      |   build_type               = Project
+V |                      |   compile_time             = 9
+V |                      |   config_generators        = 
+V |                      |   host                     = Terminal
+V |                      |   num_custom_components    = 0
+V |                      |   num_custom_extensions    = 0
+V |                      |   num_partitioned_targets  = 0
+V |                      |   num_secrets              = 0
+V |                      |   num_targets              = 4
+V |                      |   os_architecture          = X64
+V |                      |   os_platform              = Windows
+V |                      |   repo_branch              = main
+V |                      |   repo_commit              = 45a4a5
+V |                      |   repo_provider            = GitHub
+V |                      |   repo_url                 = 79771b
+V |                      |   target_framework         = .NETCoreApp,Version=v6.0
+V |                      |   version_dotnet_sdk       = 7.0.400
+V |                      |   version_nuke_common      = 7.0.2
+V |                      |   version_nuke_global_tool = 7.0.2
+V |                      | InjectNonParameterValues.OnBuildInitialized (-100)
+V |                      | EventInvoker.OnBuildInitialized (-3.4028235E+38)
+V | Clean                | EventInvoker.OnTargetRunning (-3.4028235E+38)
+V | Clean                | Telemetry.OnTargetSucceeded (0)
+V | Clean                | EventInvoker.OnTargetSucceeded (-3.4028235E+38)
+V | PublishLinux         | EventInvoker.OnTargetRunning (-3.4028235E+38)
+I | PublishLinux         | > "C:\Program Files\dotnet\dotnet.exe" publish D:\projects\K8sFileBrowser\K8sFileBrowser\K8sFileBrowser.csproj --configuration Debug --framework net7.0 --output D:\projects\K8sFileBrowser\output\linux --self-contained True --runtime linux-x64 /property:PublishSingleFile=True /property:PublishReadyToRun=True /property:Authors="Andreas Billmann" /property:Copyright="Copyright (c) 2023" /property:Version=0.1.0 -p:IncludeNativeLibrariesForSelfExtract=true
+D | PublishLinux         | MSBuild-Version 17.7.1+971bf70db für .NET
+D | PublishLinux         |   Wiederherzustellende Projekte werden ermittelt...
+D | PublishLinux         |   "D:\projects\K8sFileBrowser\K8sFileBrowser\K8sFileBrowser.csproj" wiederhergestellt (in "754 ms").
+W | PublishLinux         | D:\projects\K8sFileBrowser\K8sFileBrowser\ViewLocator.cs(23,17): warning CS8767: Die NULL-Zulässigkeit von Verweistypen im Typ des Parameters "data" von "bool ViewLocator.Match(object data)" entspricht (möglicherweise aufgrund von Attributen für die NULL-Zulässigkeit) nicht dem implizit implementierten Member "bool IDataTemplate.Match(object? data)". [D:\projects\K8sFileBrowser\K8sFileBrowser\K8sFileBrowser.csproj]
+W | PublishLinux         | D:\projects\K8sFileBrowser\K8sFileBrowser\ViewLocator.cs(10,20): warning CS8767: Die NULL-Zulässigkeit von Verweistypen im Typ des Parameters "data" von "Control ViewLocator.Build(object data)" entspricht (möglicherweise aufgrund von Attributen für die NULL-Zulässigkeit) nicht dem implizit implementierten Member "Control? ITemplate<object?, Control?>.Build(object? param)". [D:\projects\K8sFileBrowser\K8sFileBrowser\K8sFileBrowser.csproj]
+D | PublishLinux         |   Von "obj\Debug\net7.0\linux-x64\refint\K8sFileBrowser.dll" konnte keine MVID extrahiert werden. Sind Sie sicher, dass es sich dabei um eine Referenzassembly handelt?
+D | PublishLinux         |   K8sFileBrowser -> D:\projects\K8sFileBrowser\K8sFileBrowser\bin\Debug\net7.0\linux-x64\K8sFileBrowser.dll
+D | PublishLinux         |   K8sFileBrowser -> D:\projects\K8sFileBrowser\output\linux\
+V | PublishLinux         | Telemetry.OnTargetSucceeded (0)
+V | PublishLinux         | EventInvoker.OnTargetSucceeded (-3.4028235E+38)
+V | PublishWin           | EventInvoker.OnTargetRunning (-3.4028235E+38)
+I | PublishWin           | > "C:\Program Files\dotnet\dotnet.exe" publish D:\projects\K8sFileBrowser\K8sFileBrowser\K8sFileBrowser.csproj --configuration Debug --framework net7.0 --output D:\projects\K8sFileBrowser\output\win --self-contained True --runtime win-x64 /property:PublishSingleFile=True /property:PublishReadyToRun=True /property:Authors="Andreas Billmann" /property:Copyright="Copyright (c) 2023" /property:Version=0.1.0 -p:IncludeNativeLibrariesForSelfExtract=true
+D | PublishWin           | MSBuild-Version 17.7.1+971bf70db für .NET
+D | PublishWin           |   Wiederherzustellende Projekte werden ermittelt...
+D | PublishWin           |   Alle Projekte sind für die Wiederherstellung auf dem neuesten Stand.
+W | PublishWin           | D:\projects\K8sFileBrowser\K8sFileBrowser\ViewLocator.cs(23,17): warning CS8767: Die NULL-Zulässigkeit von Verweistypen im Typ des Parameters "data" von "bool ViewLocator.Match(object data)" entspricht (möglicherweise aufgrund von Attributen für die NULL-Zulässigkeit) nicht dem implizit implementierten Member "bool IDataTemplate.Match(object? data)". [D:\projects\K8sFileBrowser\K8sFileBrowser\K8sFileBrowser.csproj]
+W | PublishWin           | D:\projects\K8sFileBrowser\K8sFileBrowser\ViewLocator.cs(10,20): warning CS8767: Die NULL-Zulässigkeit von Verweistypen im Typ des Parameters "data" von "Control ViewLocator.Build(object data)" entspricht (möglicherweise aufgrund von Attributen für die NULL-Zulässigkeit) nicht dem implizit implementierten Member "Control? ITemplate<object?, Control?>.Build(object? param)". [D:\projects\K8sFileBrowser\K8sFileBrowser\K8sFileBrowser.csproj]
+D | PublishWin           |   Von "obj\Debug\net7.0\win-x64\refint\K8sFileBrowser.dll" konnte keine MVID extrahiert werden. Sind Sie sicher, dass es sich dabei um eine Referenzassembly handelt?
+D | PublishWin           |   K8sFileBrowser -> D:\projects\K8sFileBrowser\K8sFileBrowser\bin\Debug\net7.0\win-x64\K8sFileBrowser.dll
+D | PublishWin           |   K8sFileBrowser -> D:\projects\K8sFileBrowser\output\win\
+V | PublishWin           | Telemetry.OnTargetSucceeded (0)
+V | PublishWin           | EventInvoker.OnTargetSucceeded (-3.4028235E+38)
+V | Publish              | EventInvoker.OnTargetRunning (-3.4028235E+38)
+V | Publish              | Telemetry.OnTargetSucceeded (0)
+V | Publish              | EventInvoker.OnTargetSucceeded (-3.4028235E+38)
