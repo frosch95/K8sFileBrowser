@@ -169,7 +169,7 @@ public class MainWindowViewModel : ViewModelBase
 
     this.WhenAnyValue(x => x.Containers)
       .Throttle(new TimeSpan(10))
-      .Where(x => !x.IsNullOrEmpty())
+      .Where(x => x != null && x.Any())
       .ObserveOn(RxApp.MainThreadScheduler)
       .Subscribe(x => SelectedContainer = x?.FirstOrDefault());
   }
