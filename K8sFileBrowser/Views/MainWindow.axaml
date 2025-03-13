@@ -151,7 +151,19 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="models:FileInformation">
                                 <Border Background="Transparent">
-                                    <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"/>
+                                    <Border.ContextFlyout>
+                                        <MenuFlyout>
+                                            <MenuItem Header="Open" 
+                                                      Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenContextCommand}"
+                                                      CommandParameter="{Binding}"
+                                                      IsEnabled="{Binding IsDirectory}"/>
+                                            <MenuItem Header="Download" 
+                                                      Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).DownloadContextCommand}"
+                                                      CommandParameter="{Binding}"
+                                                      IsEnabled="{Binding IsFile}"/>      
+                                        </MenuFlyout>
+                                    </Border.ContextFlyout>
+                                    <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center" />
                                     <Interaction.Behaviors>
                                         <EventTriggerBehavior EventName="DoubleTapped">
                                             <InvokeCommandAction Command="{Binding ((vm:MainWindowViewModel)DataContext).OpenCommand, RelativeSource={RelativeSource AncestorType=Window }}" />

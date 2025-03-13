@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -9,8 +9,8 @@
         <Configurations>Debug;Release</Configurations>
         <Platforms>AnyCPU</Platforms>
         <ApplicationIcon>Assets/app.ico</ApplicationIcon>
-        <Version>0.1.2</Version>
-        <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
+        <Version>0.1.4</Version>
+        <RuntimeIdentifiers>win-x64;linux-x64;osx-arm64</RuntimeIdentifiers>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
       <DefineConstants>TRACE</DefineConstants>
@@ -22,21 +22,21 @@
 
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.0.2" />
-        <PackageReference Include="Avalonia.Desktop" Version="11.0.2" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.2" />
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.2" />
+        <PackageReference Include="Avalonia" Version="11.2.5" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.2.5" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.5" />
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.5" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.2" />
-        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.2" />
-        <PackageReference Include="Avalonia.Xaml.Interactions" Version="11.0.2" />
-        <PackageReference Include="Avalonia.Xaml.Interactivity" Version="11.0.2" />
-        <PackageReference Include="KubernetesClient" Version="11.0.44" />
-        <PackageReference Include="ReactiveUI.Fody" Version="19.4.1" />
-        <PackageReference Include="Serilog" Version="3.0.1" />
-        <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
-        <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
-        <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.2.5" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="11.2.5" />
+        <PackageReference Include="Avalonia.Xaml.Interactions" Version="11.2.0.14" />
+        <PackageReference Include="Avalonia.Xaml.Interactivity" Version="11.2.0.14" />
+        <PackageReference Include="KubernetesClient" Version="16.0.2" />
+        <PackageReference Include="ReactiveUI.Fody" Version="19.5.41" />
+        <PackageReference Include="Serilog" Version="4.2.0" />
+        <PackageReference Include="Serilog.Sinks.Async" Version="2.1.0" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+        <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
         <PackageReference Include="SharpZipLib" Version="1.4.2" />
     </ItemGroup>
 </Project>

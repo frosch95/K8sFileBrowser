@@ -18,9 +18,11 @@ class Build : NukeBuild
     AbsolutePath OutputDirectory => RootDirectory / "output";
     AbsolutePath WinOutputDirectory => OutputDirectory / "win";
     AbsolutePath LinuxOutputDirectory => OutputDirectory / "linux";
+    AbsolutePath OsxOutputDirectory => OutputDirectory / "osx";
 
     AbsolutePath WinZip => OutputDirectory / $"K8sFileBrowser_{Version}.zip";
     AbsolutePath LinuxGz => OutputDirectory / $"K8sFileBrowser_{Version}.tgz";
+    AbsolutePath OsxGz => OutputDirectory / $"K8sFileBrowser_OSX_{Version}.tgz";
 
     AbsolutePath ProjectFile => SourceDirectory / "K8sFileBrowser.csproj";
 
@@ -44,11 +46,11 @@ class Build : NukeBuild
                 .SetProject(ProjectFile)
                 .SetConfiguration(Configuration)
                 .SetOutput(WinOutputDirectory)
-                .SetSelfContained(true)
+                .EnableSelfContained()
                 .SetFramework("net7.0")
                 .SetRuntime("win-x64")
-                .SetPublishSingleFile(true)
-                .SetPublishReadyToRun(true)
+                .EnablePublishSingleFile()
+                .EnablePublishReadyToRun()
                 .SetAuthors("Andreas Billmann")
                 .SetCopyright("Copyright (c) 2023")
                 .SetVersion(Version)
@@ -70,11 +72,11 @@ class Build : NukeBuild
                 .SetProject(ProjectFile)
                 .SetConfiguration(Configuration)
                 .SetOutput(LinuxOutputDirectory)
-                .SetSelfContained(true)
+                .EnableSelfContained()
                 .SetFramework("net7.0")
                 .SetRuntime("linux-x64")
-                .SetPublishSingleFile(true)
-                .SetPublishReadyToRun(true)
+                .EnablePublishSingleFile()
+                .EnablePublishReadyToRun()
                 .SetAuthors("Andreas Billmann")
                 .SetCopyright("Copyright (c) 2023")
                 .SetVersion(Version)
@@ -86,9 +88,34 @@ class Build : NukeBuild
                 filter: x => !x.HasExtension(ExcludedExtensions),
                 fileMode: FileMode.CreateNew);
         });
+    
+    Target PublishOsx => _ => _
+        .DependsOn(Clean)
+        .Executes(() =>
+        {
+            DotNetPublish(s => s
+                .SetProject(ProjectFile)
+                .SetConfiguration(Configuration)
+                .SetOutput(OsxOutputDirectory)
+                .EnableSelfContained()
+                .SetFramework("net7.0")
+                .SetRuntime("osx-arm64")
+                .EnablePublishSingleFile()
+                .EnablePublishReadyToRun()
+                .SetAuthors("Andreas Billmann")
+                .SetCopyright("Copyright (c) 2023")
+                .SetVersion(Version)
+                .SetProcessArgumentConfigurator(_ => _
+                    .Add("-p:IncludeNativeLibrariesForSelfExtract=true")));
+
+            OsxOutputDirectory.TarGZipTo(
+                OsxGz,
+                filter: x => !x.HasExtension(ExcludedExtensions),
+                fileMode: FileMode.CreateNew);
+        });
 
     Target Publish => _ => _
-        .DependsOn(PublishWin, PublishLinux)
+        .DependsOn(PublishWin, PublishLinux, PublishOsx)
         .Executes(() =>
         {
         });
