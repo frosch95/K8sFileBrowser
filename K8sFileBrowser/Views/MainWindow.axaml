@@ -15,196 +15,300 @@
     </Design.DataContext>
 
     <Grid>
-        <Border ZIndex="1" IsVisible="{Binding Message.IsVisible}" Background="{Binding Message.Color}" Opacity="{Binding Message.Opacity}">
+        <Border ZIndex="1" IsVisible="{Binding Message.IsVisible}" Background="{Binding Message.Color}"
+                Opacity="{Binding Message.Opacity}">
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="20" MaxWidth="500">
-                <PathIcon Classes="loading" Data="{StaticResource arrow_rotate_clockwise_regular}" Width="100" Height="100" IsVisible="{Binding !Message.IsError}"></PathIcon>
-                <PathIcon Data="{StaticResource warning_regular}" Width="100" Height="100" IsVisible="{Binding Message.IsError}"></PathIcon>
+                <PathIcon Classes="loading" Data="{StaticResource arrow_rotate_clockwise_regular}" Width="100"
+                          Height="100" IsVisible="{Binding !Message.IsError}">
+                </PathIcon>
+                <PathIcon Data="{StaticResource warning_regular}" Width="100" Height="100"
+                          IsVisible="{Binding Message.IsError}">
+                </PathIcon>
                 <TextBlock TextWrapping="Wrap" Text="{Binding Message.Text}">.</TextBlock>
             </StackPanel>
         </Border>
         <Grid RowDefinitions="Auto, *">
-        <Border Padding="10 14" Background="#21252b">
-            <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto">
-                <Label Grid.Column="0"
-                       VerticalAlignment="Center"
-                       Margin="0 0 10 0">
-                    Cluster:
-                </Label>
-                <ComboBox Grid.Column="1"
-                          ItemsSource="{Binding ClusterContexts}"
-                          SelectedItem="{Binding SelectedClusterContext}"
-                          VerticalAlignment="Center"
-                          MinWidth="200"
-                          Margin="0 0 10 0">
-                </ComboBox>
-                <Label Grid.Column="2"
-                       VerticalAlignment="Center"
-                       Margin="0 0 10 0">
-                    Namespace:
-                </Label>
-                <ComboBox Grid.Column="3"
-                          ItemsSource="{Binding Namespaces}"
-                          SelectedItem="{Binding SelectedNamespace}"
-                          VerticalAlignment="Center"
-                          MinWidth="200"
-                          Margin="0 0 10 0">
-                </ComboBox>
-                <TextBlock Grid.Column="4" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Version}"/>
-            </Grid>
-        </Border>
-
-        <Grid ColumnDefinitions="*, 1, 3*" Grid.Row="1">
-            <ListBox
-                ItemsSource="{Binding Pods}"
-                SelectedItem="{Binding SelectedPod}" Background="Transparent">
-                <ListBox.Styles>
-                    <Style Selector="ListBoxItem">
-                        <Setter Property="Padding" Value="0" />
-                    </Style>
-                </ListBox.Styles>
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Border CornerRadius="0" Padding="0 4 0 4" BorderBrush="SlateGray"
-                                BorderThickness="0 0 0 1">
-                            <TextBlock Text="{Binding}" Padding="4" Margin="4" />
-                        </Border>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-            <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
-            <Grid Grid.Column="2" RowDefinitions="Auto, *">
-                <Grid ColumnDefinitions="*, Auto, Auto">
-                    <StackPanel Grid.Column="0" Orientation="Horizontal">
-                        <TextBlock Text="Current Directory" VerticalAlignment="Center" Margin="10 0 0 0"></TextBlock>
-                        <TextBlock Text="{Binding SelectedPath}" VerticalAlignment="Center" Margin="10 0 0 0"></TextBlock>
-                    </StackPanel>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Label VerticalAlignment="Center"
-                               Margin="0 0 10 0">
-                            Container:
-                        </Label>
-                        <ComboBox ItemsSource="{Binding Containers}"
-                                  SelectedItem="{Binding SelectedContainer}"
-                                  VerticalAlignment="Center"
-                                  MinWidth="200"
-                                  Margin="0 0 10 0">
-                        </ComboBox>
-                    </StackPanel>
-                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" Margin="10" HorizontalAlignment="Right">
-                        <Button Command="{Binding DownloadLogCommand}" VerticalAlignment="Center" ToolTip.Tip="Download Container Log" Margin="0 0 48 0 ">
-                            <PathIcon Data="{StaticResource document_one_page_regular}"></PathIcon>
-                        </Button>
-                        <Button Command="{Binding RefreshCommand}" VerticalAlignment="Center" ToolTip.Tip="Refresh Directory">
-                            <PathIcon Data="{StaticResource arrow_sync_circle_regular}"></PathIcon>
-                        </Button>
-                        <Button Command="{Binding ParentCommand}" VerticalAlignment="Center" ToolTip.Tip="Go To Parent Directory">
-                            <PathIcon Data="{StaticResource arrow_curve_up_left_regular}"></PathIcon>
-                        </Button>
-                        <Button Command="{Binding OpenCommand}" VerticalAlignment="Center" ToolTip.Tip="Browse Directory">
-                            <PathIcon Data="{StaticResource arrow_right_regular}"></PathIcon>
-                        </Button>
-                        <Button Command="{Binding DownloadCommand}" VerticalAlignment="Center" ToolTip.Tip="Download File">
-                            <PathIcon Data="{StaticResource arrow_download_regular}"></PathIcon>
-                        </Button>
-                    </StackPanel>
+            <Border Padding="10 14" Background="#21252b">
+                <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto">
+                    <Label Grid.Column="0"
+                           VerticalAlignment="Center"
+                           Margin="0 0 10 0">
+                        Cluster:
+                    </Label>
+                    <ComboBox Grid.Column="1"
+                              ItemsSource="{Binding ClusterContexts}"
+                              SelectedItem="{Binding SelectedClusterContext}"
+                              VerticalAlignment="Center"
+                              MinWidth="200"
+                              Margin="0 0 10 0">
+                    </ComboBox>
+                    <Label Grid.Column="2"
+                           VerticalAlignment="Center"
+                           Margin="0 0 10 0">
+                        Namespace:
+                    </Label>
+                    <ComboBox Grid.Column="3"
+                              ItemsSource="{Binding Namespaces}"
+                              SelectedItem="{Binding SelectedNamespace}"
+                              VerticalAlignment="Center"
+                              MinWidth="200"
+                              Margin="0 0 10 0">
+                    </ComboBox>
+                    <TextBlock Grid.Column="4" HorizontalAlignment="Right" VerticalAlignment="Center"
+                               Text="{Binding Version}" />
                 </Grid>
-                <DataGrid Grid.Row="1"
-                          Name="FileInformationDataGrid"
-                          Margin="2 0 2 0"
-                          ItemsSource="{Binding FileInformation}"
-                          IsReadOnly="True"
-                          GridLinesVisibility="Horizontal"
-                          BorderThickness="1"
-                          SelectionMode="Single"
-                          SelectedItem="{Binding SelectedFile}"
-                          Focusable="False">
-                <DataGrid.Styles>
-                    <Style Selector="DataGridColumnHeader">
-                        <Setter Property="FontSize" Value="14"></Setter>
-                        <Setter Property="Padding" Value="10"></Setter>
-                    </Style>
-                    <Style Selector="DataGridCell">
-                        <Setter Property="FontSize" Value="14"></Setter>
-                    </Style>
-                </DataGrid.Styles>
-                <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="Type" CanUserSort="False">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="models:FileInformation">
-                                <Border ToolTip.Tip="{Binding Type}" Background="Transparent">
-                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                        <PathIcon Data="{StaticResource folder_regular}" IsVisible="{Binding IsDirectory}"></PathIcon>
-                                        <PathIcon Data="{StaticResource document_regular}" IsVisible="{Binding IsFile}"></PathIcon>
-                                        <PathIcon Data="{StaticResource document_error_regular}" IsVisible="{Binding IsSymbolicLink}"></PathIcon>
-                                        <PathIcon Data="{StaticResource document_unknown_regular}" IsVisible="{Binding IsUnknown}"></PathIcon>
-                                    </StackPanel>
-                                    <Interaction.Behaviors>
-                                        <EventTriggerBehavior EventName="DoubleTapped">
-                                            <InvokeCommandAction Command="{Binding ((vm:MainWindowViewModel)DataContext).OpenCommand, RelativeSource={RelativeSource AncestorType=Window }}" />
-                                        </EventTriggerBehavior>
-                                    </Interaction.Behaviors>
-                                </Border>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Name" Width="*" CanUserSort="False">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="models:FileInformation">
-                                <Border Background="Transparent">
-                                    <Border.ContextFlyout>
-                                        <MenuFlyout>
-                                            <MenuItem Header="Open" 
-                                                      Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenContextCommand}"
-                                                      CommandParameter="{Binding}"
-                                                      IsEnabled="{Binding IsDirectory}"/>
-                                            <MenuItem Header="Download" 
-                                                      Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).DownloadContextCommand}"
-                                                      CommandParameter="{Binding}"
-                                                      IsEnabled="{Binding IsFile}"/>      
-                                        </MenuFlyout>
-                                    </Border.ContextFlyout>
-                                    <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center" />
-                                    <Interaction.Behaviors>
-                                        <EventTriggerBehavior EventName="DoubleTapped">
-                                            <InvokeCommandAction Command="{Binding ((vm:MainWindowViewModel)DataContext).OpenCommand, RelativeSource={RelativeSource AncestorType=Window }}" />
-                                        </EventTriggerBehavior>
-                                    </Interaction.Behaviors>
-                                </Border>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Size" CanUserSort="False">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="models:FileInformation">
-                                <Border Background="Transparent">
-                                    <TextBlock Text="{Binding Size}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0 0 10 0"/>
-                                    <Interaction.Behaviors>
-                                        <EventTriggerBehavior EventName="DoubleTapped">
-                                            <InvokeCommandAction Command="{Binding ((vm:MainWindowViewModel)DataContext).OpenCommand, RelativeSource={RelativeSource AncestorType=Window }}" />
-                                        </EventTriggerBehavior>
-                                    </Interaction.Behaviors>
-                                </Border>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Date" CanUserSort="False">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="models:FileInformation">
-                                <Border Background="Transparent">
-                                    <TextBlock Text="{Binding DateTimeOffsetString}" VerticalAlignment="Center" Margin="10 0 8 0"/>
-                                    <Interaction.Behaviors>
-                                        <EventTriggerBehavior EventName="DoubleTapped">
-                                            <InvokeCommandAction Command="{Binding ((vm:MainWindowViewModel)DataContext).OpenCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
-                                        </EventTriggerBehavior>
-                                    </Interaction.Behaviors>
-                                </Border>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+            </Border>
+
+            <Grid ColumnDefinitions="*, 1, 3*" Grid.Row="1">
+                <ListBox
+                    ItemsSource="{Binding Pods}"
+                    SelectedItem="{Binding SelectedPod}" Background="Transparent">
+                    <ListBox.Styles>
+                        <Style Selector="ListBoxItem">
+                            <Setter Property="Padding" Value="0" />
+                        </Style>
+                    </ListBox.Styles>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border CornerRadius="0" Padding="0 4 0 4" BorderBrush="SlateGray"
+                                    BorderThickness="0 0 0 1">
+                                <TextBlock Text="{Binding}" Padding="4" Margin="4" />
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
+                <Grid Grid.Column="2" RowDefinitions="Auto, *">
+                    <Grid ColumnDefinitions="*, Auto, Auto">
+                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                            <TextBlock Text="Current Directory" VerticalAlignment="Center" Margin="10 0 0 0"></TextBlock>
+                            <TextBlock Text="{Binding SelectedPath}" VerticalAlignment="Center" Margin="10 0 0 0"></TextBlock>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal">
+                            <Label VerticalAlignment="Center"
+                                   Margin="0 0 10 0">
+                                Container:
+                            </Label>
+                            <ComboBox ItemsSource="{Binding Containers}"
+                                      SelectedItem="{Binding SelectedContainer}"
+                                      VerticalAlignment="Center"
+                                      MinWidth="200"
+                                      Margin="0 0 10 0">
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" Margin="10"
+                                    HorizontalAlignment="Right">
+                            <Button Command="{Binding DownloadLogCommand}" VerticalAlignment="Center"
+                                    ToolTip.Tip="Download Container Log" Margin="0 0 48 0 ">
+                                <PathIcon Data="{StaticResource document_one_page_regular}"></PathIcon>
+                            </Button>
+                            <Button Command="{Binding RefreshCommand}" VerticalAlignment="Center"
+                                    ToolTip.Tip="Refresh Directory">
+                                <PathIcon Data="{StaticResource arrow_sync_circle_regular}"></PathIcon>
+                            </Button>
+                            <Button Command="{Binding ParentCommand}" VerticalAlignment="Center"
+                                    ToolTip.Tip="Go To Parent Directory">
+                                <PathIcon Data="{StaticResource arrow_curve_up_left_regular}"></PathIcon>
+                            </Button>
+                            <Button Command="{Binding OpenContextCommand}" CommandParameter="{Binding SelectedFile}"
+                                    IsEnabled="{Binding SelectedFile.IsDirectory}" VerticalAlignment="Center"
+                                    ToolTip.Tip="Browse Directory">
+                                <PathIcon Data="{StaticResource arrow_right_regular}"></PathIcon>
+                            </Button>
+                            <Button Command="{Binding DownloadContextCommand}"
+                                    CommandParameter="{Binding SelectedFile}" IsEnabled="{Binding SelectedFile.IsFile}"
+                                    VerticalAlignment="Center" ToolTip.Tip="Download File">
+                                <PathIcon Data="{StaticResource arrow_download_regular}"></PathIcon>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                    <DataGrid Grid.Row="1"
+                              Name="FileInformationDataGrid"
+                              Margin="2 0 2 0"
+                              ItemsSource="{Binding FileInformation}"
+                              IsReadOnly="True"
+                              GridLinesVisibility="Horizontal"
+                              BorderThickness="1"
+                              SelectionMode="Single"
+                              SelectedItem="{Binding SelectedFile}"
+                              Focusable="False">
+                        <DataGrid.Styles>
+                            <Style Selector="DataGridColumnHeader">
+                                <Setter Property="FontSize" Value="14"></Setter>
+                                <Setter Property="Padding" Value="10"></Setter>
+                            </Style>
+                            <Style Selector="DataGridCell">
+                                <Setter Property="FontSize" Value="14"></Setter>
+                            </Style>
+                        </DataGrid.Styles>
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Type" CanUserSort="False">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate DataType="models:FileInformation">
+                                        <Border ToolTip.Tip="{Binding Type}" Background="Transparent">
+                                            <Border.ContextFlyout>
+                                                <MenuFlyout>
+                                                    <MenuItem Header="Open"
+                                                              Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenContextCommand}"
+                                                              CommandParameter="{Binding}"
+                                                              IsEnabled="{Binding IsDirectory}">
+                                                        <MenuItem.Icon>
+                                                            <PathIcon Data="{StaticResource arrow_right_regular}"></PathIcon>
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
+                                                    <MenuItem Header="Download"
+                                                              Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).DownloadContextCommand}"
+                                                              CommandParameter="{Binding}"
+                                                              IsEnabled="{Binding IsFile}">
+                                                        <MenuItem.Icon>
+                                                            <PathIcon Data="{StaticResource arrow_download_regular}"></PathIcon>
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
+                                                </MenuFlyout>
+                                            </Border.ContextFlyout>
+                                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                <PathIcon Data="{StaticResource folder_regular}"
+                                                          IsVisible="{Binding IsDirectory}">
+                                                </PathIcon>
+                                                <PathIcon Data="{StaticResource document_regular}"
+                                                          IsVisible="{Binding IsFile}">
+                                                </PathIcon>
+                                                <PathIcon Data="{StaticResource document_error_regular}"
+                                                          IsVisible="{Binding IsSymbolicLink}">
+                                                </PathIcon>
+                                                <PathIcon Data="{StaticResource document_unknown_regular}"
+                                                          IsVisible="{Binding IsUnknown}">
+                                                </PathIcon>
+                                            </StackPanel>
+                                            <Interaction.Behaviors>
+                                                <EventTriggerBehavior EventName="DoubleTapped">
+                                                    <InvokeCommandAction
+                                                        Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenContextCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        IsEnabled="{Binding IsDirectory}"/>
+                                                </EventTriggerBehavior>
+                                            </Interaction.Behaviors>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Name" Width="*" CanUserSort="False">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate DataType="models:FileInformation">
+                                        <Border Background="Transparent">
+                                            <Border.ContextFlyout>
+                                                <MenuFlyout>
+                                                    <MenuItem Header="Open"
+                                                              Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenContextCommand}"
+                                                              CommandParameter="{Binding}"
+                                                              IsEnabled="{Binding IsDirectory}">
+                                                        <MenuItem.Icon>
+                                                            <PathIcon Data="{StaticResource arrow_right_regular}"></PathIcon>
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
+                                                    <MenuItem Header="Download"
+                                                              Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).DownloadContextCommand}"
+                                                              CommandParameter="{Binding}"
+                                                              IsEnabled="{Binding IsFile}">
+                                                        <MenuItem.Icon>
+                                                            <PathIcon Data="{StaticResource arrow_download_regular}"></PathIcon>
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
+                                                </MenuFlyout>
+                                            </Border.ContextFlyout>
+                                            <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center" />
+                                            <Interaction.Behaviors>
+                                                <EventTriggerBehavior EventName="DoubleTapped">
+                                                    <InvokeCommandAction
+                                                        Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenContextCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        IsEnabled="{Binding IsDirectory}"/>
+                                                </EventTriggerBehavior>
+                                            </Interaction.Behaviors>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Size" CanUserSort="False">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate DataType="models:FileInformation">
+                                        <Border Background="Transparent">
+                                            <Border.ContextFlyout>
+                                                <MenuFlyout>
+                                                    <MenuItem Header="Open"
+                                                              Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenContextCommand}"
+                                                              CommandParameter="{Binding}"
+                                                              IsEnabled="{Binding IsDirectory}">
+                                                        <MenuItem.Icon>
+                                                            <PathIcon Data="{StaticResource arrow_right_regular}"></PathIcon>
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
+                                                    <MenuItem Header="Download"
+                                                              Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).DownloadContextCommand}"
+                                                              CommandParameter="{Binding}"
+                                                              IsEnabled="{Binding IsFile}">
+                                                        <MenuItem.Icon>
+                                                            <PathIcon Data="{StaticResource arrow_download_regular}"></PathIcon>
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
+                                                </MenuFlyout>
+                                            </Border.ContextFlyout>
+                                            <TextBlock Text="{Binding Size}" VerticalAlignment="Center"
+                                                       HorizontalAlignment="Right" Margin="0 0 10 0" />
+                                            <Interaction.Behaviors>
+                                                <EventTriggerBehavior EventName="DoubleTapped">
+                                                    <InvokeCommandAction
+                                                        Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenContextCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        IsEnabled="{Binding IsDirectory}"/>
+                                                </EventTriggerBehavior>
+                                            </Interaction.Behaviors>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Date" CanUserSort="False">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate DataType="models:FileInformation">
+                                        <Border Background="Transparent">
+                                            <Border.ContextFlyout>
+                                                <MenuFlyout>
+                                                    <MenuItem Header="Open"
+                                                              Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenContextCommand}"
+                                                              CommandParameter="{Binding}"
+                                                              IsEnabled="{Binding IsDirectory}">
+                                                        <MenuItem.Icon>
+                                                            <PathIcon Data="{StaticResource arrow_right_regular}"></PathIcon>
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
+                                                    <MenuItem Header="Download"
+                                                              Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).DownloadContextCommand}"
+                                                              CommandParameter="{Binding}"
+                                                              IsEnabled="{Binding IsFile}">
+                                                        <MenuItem.Icon>
+                                                            <PathIcon Data="{StaticResource arrow_download_regular}"></PathIcon>
+                                                        </MenuItem.Icon>
+                                                    </MenuItem>
+                                                </MenuFlyout>
+                                            </Border.ContextFlyout>
+                                            <TextBlock Text="{Binding DateTimeOffsetString}" VerticalAlignment="Center"
+                                                       Margin="10 0 8 0" />
+                                            <Interaction.Behaviors>
+                                                <EventTriggerBehavior EventName="DoubleTapped">
+                                                    <InvokeCommandAction
+                                                        Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenContextCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        IsEnabled="{Binding IsDirectory}"/>
+                                                </EventTriggerBehavior>
+                                            </Interaction.Behaviors>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
             </Grid>
         </Grid>
-    </Grid>
     </Grid>
 </Window>

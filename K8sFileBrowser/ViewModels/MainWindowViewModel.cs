@@ -9,7 +9,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using K8sFileBrowser.Models;
 using K8sFileBrowser.Services;
-using Microsoft.IdentityModel.Tokens;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Serilog;
@@ -65,14 +64,11 @@ public class MainWindowViewModel : ViewModelBase
   #endregion Properties
 
   #region Commands
-
-  public ReactiveCommand<Unit, Unit> DownloadCommand { get; private set; } = null!;
+  
   public ReactiveCommand<Unit, Unit> DownloadLogCommand { get; private set; } = null!;
   public ReactiveCommand<Unit, Unit> RefreshCommand { get; private set; } = null!;
   public ReactiveCommand<Unit, Unit> ParentCommand { get; private set; } = null!;
-  public ReactiveCommand<Unit, Unit> OpenCommand { get; private set; } = null!;
   public ReactiveCommand<FileInformation, Unit> OpenContextCommand { get; private set; } = null!;
-  
   public ReactiveCommand<FileInformation, Unit> DownloadContextCommand { get; private set; } = null!;
   private ReactiveCommand<Namespace, IEnumerable<Pod>> GetPodsForNamespace { get; set; } = null!;
 
@@ -85,9 +81,7 @@ public class MainWindowViewModel : ViewModelBase
     Version = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
 
     // commands
-    ConfigureOpenDirectoryCommand();
     ConfigureOpenDirectoryContextCommand();
-    ConfigureDownloadFileCommand(kubernetesService);
     ConfigureDownloadFileContextCommand(kubernetesService);
     ConfigureRefreshCommand(kubernetesService);
     ConfigureDownloadLogCommand(kubernetesService);
@@ -275,32 +269,7 @@ public class MainWindowViewModel : ViewModelBase
       .Subscribe(ShowErrorMessage);
   }
 
-  private void ConfigureDownloadFileCommand(IKubernetesService kubernetesService)
-  {
-    var isFile = this
-      .WhenAnyValue(x => x.SelectedFile, x => x.Message.IsVisible)
-      .Select(x => x is { Item1.Type: FileType.File, Item2: false });
-
-    DownloadCommand = ReactiveCommand.CreateFromTask(async () =>
-    {
-      await Observable.StartAsync(async () =>
-      {
-        var fileName = SelectedFile!.Name.Substring(SelectedFile!.Name.LastIndexOf('/') + 1,
-          SelectedFile!.Name.Length - SelectedFile!.Name.LastIndexOf('/') - 1);
-        var saveFileName = await ApplicationHelper.SaveFile(_lastDirectory, fileName);
-        if (saveFileName != null)
-        {
-          SetLastDirectory(saveFileName);
-          ShowWorkingMessage("Downloading File...");
-          await kubernetesService.DownloadFile(SelectedNamespace, SelectedPod, SelectedContainer, SelectedFile, saveFileName);
-          HideWorkingMessage();
-        }
-      }, RxApp.TaskpoolScheduler);
-    }, isFile, RxApp.MainThreadScheduler);
-
-    DownloadCommand.ThrownExceptions.ObserveOn(RxApp.MainThreadScheduler)
-      .Subscribe(ShowErrorMessage);
-  }
+  
   
   private void ConfigureDownloadFileContextCommand(IKubernetesService kubernetesService)
   {
@@ -322,7 +291,7 @@ public class MainWindowViewModel : ViewModelBase
       }, RxApp.TaskpoolScheduler);
     }, outputScheduler: RxApp.MainThreadScheduler);
 
-    DownloadCommand.ThrownExceptions.ObserveOn(RxApp.MainThreadScheduler)
+    DownloadContextCommand.ThrownExceptions.ObserveOn(RxApp.MainThreadScheduler)
       .Subscribe(ShowErrorMessage);
   }
 
@@ -330,25 +299,7 @@ public class MainWindowViewModel : ViewModelBase
   {
     _lastDirectory = saveFileName.Substring(0, saveFileName.LastIndexOf(Path.DirectorySeparatorChar));
   }
-
-  private void ConfigureOpenDirectoryCommand()
-  {
-    var isDirectory = this
-      .WhenAnyValue(x => x.SelectedFile, x => x.Message.IsVisible)
-      .Select(x => x is { Item1.Type: FileType.Directory, Item2: false });
-
-    OpenCommand = ReactiveCommand.Create(() =>
-      {
-        if (".." == SelectedFile?.Name)
-          SelectedPath = SelectedFile?.Parent;
-        else
-          SelectedPath = SelectedFile != null ? SelectedFile!.Name : "/";
-      },
-      isDirectory, RxApp.MainThreadScheduler);
-
-    OpenCommand.ThrownExceptions.ObserveOn(RxApp.MainThreadScheduler)
-      .Subscribe(ShowErrorMessage);
-  }
+  
   
   private void ConfigureOpenDirectoryContextCommand()
   {
@@ -357,7 +308,7 @@ public class MainWindowViewModel : ViewModelBase
       SelectedPath = ".." == file.Name ? file.Parent : file.Name;
     }, outputScheduler: RxApp.MainThreadScheduler);
 
-    OpenCommand.ThrownExceptions.ObserveOn(RxApp.MainThreadScheduler)
+    OpenContextCommand.ThrownExceptions.ObserveOn(RxApp.MainThreadScheduler)
       .Subscribe(ShowErrorMessage);
   }
 
