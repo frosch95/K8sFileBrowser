@@ -12,7 +12,7 @@ class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
-    [Parameter] readonly string Version = "1.0.0";
+    [Parameter] readonly string Version = "1.4.0";
 
     AbsolutePath SourceDirectory => RootDirectory / "K8sFileBrowser";
     AbsolutePath OutputDirectory => RootDirectory / "output";
@@ -47,7 +47,7 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .SetOutput(WinOutputDirectory)
                 .EnableSelfContained()
-                .SetFramework("net7.0")
+                .SetFramework("net8.0")
                 .SetRuntime("win-x64")
                 .EnablePublishSingleFile()
                 .EnablePublishReadyToRun()
@@ -73,7 +73,7 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .SetOutput(LinuxOutputDirectory)
                 .EnableSelfContained()
-                .SetFramework("net7.0")
+                .SetFramework("net8.0")
                 .SetRuntime("linux-x64")
                 .EnablePublishSingleFile()
                 .EnablePublishReadyToRun()
@@ -98,7 +98,7 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .SetOutput(OsxOutputDirectory)
                 .EnableSelfContained()
-                .SetFramework("net7.0")
+                .SetFramework("net8.0")
                 .SetRuntime("osx-arm64")
                 .EnablePublishSingleFile()
                 .EnablePublishReadyToRun()
