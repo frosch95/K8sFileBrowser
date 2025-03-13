@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.ReactiveUI;
 using System;
+using Avalonia.Logging;
 using Serilog;
 
 namespace K8sFileBrowser;
@@ -18,6 +19,7 @@ class Program
                 //.Filter.ByIncludingOnly(Matching.WithProperty("Area", LogArea.Control))
                 .MinimumLevel.Information()
                 .WriteTo.Async(a => a.File("app.log"))
+                //.WriteTo.Console()
                 .CreateLogger();
 
             BuildAvaloniaApp()
@@ -42,5 +44,6 @@ class Program
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace()
+            //.LogToTrace(LogEventLevel.Verbose)
             .UseReactiveUI();
 }

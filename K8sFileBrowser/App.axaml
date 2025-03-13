@@ -10,7 +10,7 @@
     </Application.DataTemplates>
 
     <Application.Styles>
-        <FluentTheme>
+        <FluentTheme DensityStyle="Compact">
             <FluentTheme.Palettes>
                 <!-- Palette for Light theme variant -->
                 <ColorPaletteResources x:Key="Light" Accent="Green" RegionColor="White" ErrorText="Red" />
@@ -29,6 +29,7 @@
                                        ChromeMediumLow="#21252b"
 
                                        />
+                
                 <!-- AltHigh is used for the color of header in the DataGrid -->
                 <!-- BaseHigh is used for the text color -->
                 <!-- ListLow is used for the mouse over in lists and DataGrid -->

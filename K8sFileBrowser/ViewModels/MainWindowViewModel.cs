@@ -71,6 +71,9 @@ public class MainWindowViewModel : ViewModelBase
   public ReactiveCommand<Unit, Unit> RefreshCommand { get; private set; } = null!;
   public ReactiveCommand<Unit, Unit> ParentCommand { get; private set; } = null!;
   public ReactiveCommand<Unit, Unit> OpenCommand { get; private set; } = null!;
+  public ReactiveCommand<FileInformation, Unit> OpenContextCommand { get; private set; } = null!;
+  
+  public ReactiveCommand<FileInformation, Unit> DownloadContextCommand { get; private set; } = null!;
   private ReactiveCommand<Namespace, IEnumerable<Pod>> GetPodsForNamespace { get; set; } = null!;
 
   #endregion Commands
@@ -83,7 +86,9 @@ public class MainWindowViewModel : ViewModelBase
 
     // commands
     ConfigureOpenDirectoryCommand();
+    ConfigureOpenDirectoryContextCommand();
     ConfigureDownloadFileCommand(kubernetesService);
+    ConfigureDownloadFileContextCommand(kubernetesService);
     ConfigureRefreshCommand(kubernetesService);
     ConfigureDownloadLogCommand(kubernetesService);
     ConfigureParentDirectoryCommand();
@@ -296,6 +301,30 @@ public class MainWindowViewModel : ViewModelBase
     DownloadCommand.ThrownExceptions.ObserveOn(RxApp.MainThreadScheduler)
       .Subscribe(ShowErrorMessage);
   }
+  
+  private void ConfigureDownloadFileContextCommand(IKubernetesService kubernetesService)
+  {
+
+    DownloadContextCommand = ReactiveCommand.CreateFromTask<FileInformation>(async (file) =>
+    {
+      await Observable.StartAsync(async () =>
+      {
+        var fileName = file.Name.Substring(SelectedFile!.Name.LastIndexOf('/') + 1,
+          file.Name.Length - file.Name.LastIndexOf('/') - 1);
+        var saveFileName = await ApplicationHelper.SaveFile(_lastDirectory, fileName);
+        if (saveFileName != null)
+        {
+          SetLastDirectory(saveFileName);
+          ShowWorkingMessage("Downloading File...");
+          await kubernetesService.DownloadFile(SelectedNamespace, SelectedPod, SelectedContainer, file, saveFileName);
+          HideWorkingMessage();
+        }
+      }, RxApp.TaskpoolScheduler);
+    }, outputScheduler: RxApp.MainThreadScheduler);
+
+    DownloadCommand.ThrownExceptions.ObserveOn(RxApp.MainThreadScheduler)
+      .Subscribe(ShowErrorMessage);
+  }
 
   private void SetLastDirectory(string saveFileName)
   {
@@ -316,6 +345,17 @@ public class MainWindowViewModel : ViewModelBase
           SelectedPath = SelectedFile != null ? SelectedFile!.Name : "/";
       },
       isDirectory, RxApp.MainThreadScheduler);
+
+    OpenCommand.ThrownExceptions.ObserveOn(RxApp.MainThreadScheduler)
+      .Subscribe(ShowErrorMessage);
+  }
+  
+  private void ConfigureOpenDirectoryContextCommand()
+  {
+    OpenContextCommand = ReactiveCommand.Create<FileInformation>((file) =>
+    {
+      SelectedPath = ".." == file.Name ? file.Parent : file.Name;
+    }, outputScheduler: RxApp.MainThreadScheduler);
 
     OpenCommand.ThrownExceptions.ObserveOn(RxApp.MainThreadScheduler)
       .Subscribe(ShowErrorMessage);
