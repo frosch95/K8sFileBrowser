@@ -12,7 +12,7 @@ class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
-    [Parameter] readonly string Version = "1.4.0";
+    [Parameter] readonly string Version = "1.5.0";
 
     AbsolutePath SourceDirectory => RootDirectory / "K8sFileBrowser";
     AbsolutePath OutputDirectory => RootDirectory / "output";
