@@ -47,15 +47,14 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .SetOutput(WinOutputDirectory)
                 .EnableSelfContained()
-                .SetFramework("net8.0")
+                .SetFramework("net9.0")
                 .SetRuntime("win-x64")
                 .EnablePublishSingleFile()
                 .EnablePublishReadyToRun()
                 .SetAuthors("Andreas Billmann")
                 .SetCopyright("Copyright (c) 2023")
                 .SetVersion(Version)
-                .SetProcessArgumentConfigurator(_ => _
-                    .Add("-p:IncludeNativeLibrariesForSelfExtract=true")));
+                .SetProcessAdditionalArguments("-p:IncludeNativeLibrariesForSelfExtract=true"));
 
             WinOutputDirectory.ZipTo(
                 WinZip,
@@ -73,15 +72,14 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .SetOutput(LinuxOutputDirectory)
                 .EnableSelfContained()
-                .SetFramework("net8.0")
+                .SetFramework("net9.0")
                 .SetRuntime("linux-x64")
                 .EnablePublishSingleFile()
                 .EnablePublishReadyToRun()
                 .SetAuthors("Andreas Billmann")
                 .SetCopyright("Copyright (c) 2023")
                 .SetVersion(Version)
-                .SetProcessArgumentConfigurator(_ => _
-                    .Add("-p:IncludeNativeLibrariesForSelfExtract=true")));
+                .SetProcessAdditionalArguments("-p:IncludeNativeLibrariesForSelfExtract=true"));
 
             LinuxOutputDirectory.TarGZipTo(
                 LinuxGz,
@@ -98,15 +96,14 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .SetOutput(OsxOutputDirectory)
                 .EnableSelfContained()
-                .SetFramework("net8.0")
+                .SetFramework("net9.0")
                 .SetRuntime("osx-arm64")
                 .EnablePublishSingleFile()
                 .EnablePublishReadyToRun()
                 .SetAuthors("Andreas Billmann")
                 .SetCopyright("Copyright (c) 2023")
                 .SetVersion(Version)
-                .SetProcessArgumentConfigurator(_ => _
-                    .Add("-p:IncludeNativeLibrariesForSelfExtract=true")));
+                .SetProcessAdditionalArguments("-p:IncludeNativeLibrariesForSelfExtract=true"));
 
             OsxOutputDirectory.TarGZipTo(
                 OsxGz,
