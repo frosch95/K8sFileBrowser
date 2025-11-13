@@ -68,7 +68,7 @@ public class KubernetesService : IKubernetesService
         try
         {
             var execResult = new KubernetesFileInformationResult(path);
-            var resultCode = _kubernetesClient
+            _kubernetesClient
                 .NamespacedPodExecAsync(
                     podName, namespaceName, containerName,
                     new[] { "find", path, "-maxdepth", "1", "-exec", "stat", "-c", "%F|%n|%s|%Y", "{}", ";" },
@@ -128,10 +128,15 @@ public class KubernetesService : IKubernetesService
             }
 
             using var streamReader = new StreamReader(stdError);
-            while (streamReader.EndOfStream == false)
+            var error = string.Empty;
+            while (await streamReader.ReadLineAsync(cancellationToken) is { } line)
             {
-                var error = await streamReader.ReadToEndAsync(cancellationToken);
-                Log.Error("Remote error: {Error}",error);
+                error += line.Trim() + Environment.NewLine;
+            }
+
+            if (string.IsNullOrEmpty(error))
+            {
+                Log.Error("Remote error: {Error}",error);    
             }
         });
 

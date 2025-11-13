@@ -12,7 +12,7 @@ class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
-    [Parameter] readonly string Version = "1.6.0";
+    [Parameter] readonly string Version = "1.7.0";
 
     AbsolutePath SourceDirectory => RootDirectory / "K8sFileBrowser";
     AbsolutePath OutputDirectory => RootDirectory / "output";
@@ -47,12 +47,12 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .SetOutput(WinOutputDirectory)
                 .EnableSelfContained()
-                .SetFramework("net9.0")
+                .SetFramework("net10.0")
                 .SetRuntime("win-x64")
                 .EnablePublishSingleFile()
                 .EnablePublishReadyToRun()
                 .SetAuthors("Andreas Billmann")
-                .SetCopyright("Copyright (c) 2023")
+                .SetCopyright("Copyright (c) 2025")
                 .SetVersion(Version)
                 .SetProcessAdditionalArguments("-p:IncludeNativeLibrariesForSelfExtract=true"));
 
@@ -72,12 +72,12 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .SetOutput(LinuxOutputDirectory)
                 .EnableSelfContained()
-                .SetFramework("net9.0")
+                .SetFramework("net10.0")
                 .SetRuntime("linux-x64")
                 .EnablePublishSingleFile()
                 .EnablePublishReadyToRun()
                 .SetAuthors("Andreas Billmann")
-                .SetCopyright("Copyright (c) 2023")
+                .SetCopyright("Copyright (c) 2025")
                 .SetVersion(Version)
                 .SetProcessAdditionalArguments("-p:IncludeNativeLibrariesForSelfExtract=true"));
 
@@ -96,12 +96,12 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .SetOutput(OsxOutputDirectory)
                 .EnableSelfContained()
-                .SetFramework("net9.0")
+                .SetFramework("net10.0")
                 .SetRuntime("osx-arm64")
                 .EnablePublishSingleFile()
                 .EnablePublishReadyToRun()
                 .SetAuthors("Andreas Billmann")
-                .SetCopyright("Copyright (c) 2023")
+                .SetCopyright("Copyright (c) 2025")
                 .SetVersion(Version)
                 .SetProcessAdditionalArguments("-p:IncludeNativeLibrariesForSelfExtract=true"));
 

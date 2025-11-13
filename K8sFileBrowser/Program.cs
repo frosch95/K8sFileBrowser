@@ -1,7 +1,8 @@
 ﻿using Avalonia;
-using Avalonia.ReactiveUI;
+
 using System;
 using Avalonia.Logging;
+using ReactiveUI.Avalonia;
 using Serilog;
 
 namespace K8sFileBrowser;
